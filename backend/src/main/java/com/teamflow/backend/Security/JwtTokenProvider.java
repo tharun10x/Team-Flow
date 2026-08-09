@@ -12,6 +12,10 @@ import javax.crypto.SecretKey;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 @Component
 public class JwtTokenProvider {
 
@@ -20,6 +24,7 @@ public class JwtTokenProvider {
     @Value("${jwt.exp}")
     private String jwtExpirationsMs;
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     public SecretKey getSigningKey(){
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
@@ -37,7 +42,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-     public String getUserNameFromJwtToken(String token) {
+     public String getUsernameFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
@@ -54,6 +59,7 @@ public class JwtTokenProvider {
             .parseSignedClaims(token);
             return true;
         } catch (Exception e) {
+            logger.error("Invalid JWT token: {}", e.getMessage());
             return false;
         }
      }
