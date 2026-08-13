@@ -150,7 +150,7 @@ private WorkspaceResponse toDetailedResponse(Workspace workspace, Long currentUs
     Workspace workspace = workspaceRepository.findById(workspaceId)
             .orElseThrow(() -> new RuntimeException("Workspace not found"));
 
-    return toDetailedResponse(workspace, currentUserId);
+    return toDetailedResponse(workspace, currentUserId); 
 }
 
     @Transactional

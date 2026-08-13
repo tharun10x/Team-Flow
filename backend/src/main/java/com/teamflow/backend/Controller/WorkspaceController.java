@@ -23,7 +23,7 @@ import com.teamflow.backend.dto.JoinWorkspaceRequest;
 import com.teamflow.backend.dto.WorkspaceRequest;
 import com.teamflow.backend.dto.WorkspaceResponse;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 
 
