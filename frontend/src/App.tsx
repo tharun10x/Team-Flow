@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Login } from "./pages/Login";
 import Register from "./pages/Register";
 import { DashboardLayout } from "./components/DashboardLayout";
@@ -9,6 +9,25 @@ import { Message } from "./pages/Message";
 import { Team } from "./pages/Team";
 import { Settings } from "./pages/Settings";
 import { NotFound } from "./pages/NotFound";
+import { WorkspacesPage } from "./pages/WorkspacesPage";
+import { useWorkspace } from "./context/WorkspaceContext";
+
+// This is the "traffic cop" — it checks the workspace context
+// and redirects users to the right place.
+function WorkspaceRedirect() {
+  const { workspaces, currentWorkspace, isLoading } = useWorkspace();
+
+  // Wait for the context to finish fetching from the backend
+  if (isLoading) return <div>Loading...</div>;
+
+  // No workspaces OR none selected → send to Hub
+  if (workspaces.length === 0 || !currentWorkspace) {
+    return <Navigate to="/workspaces" replace />;
+  }
+
+  // Has a workspace selected → send to Dashboard
+  return <Navigate to="/dashboard" replace />;
+}
 
 export default function App() {
   return (
@@ -19,8 +38,16 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         
         <Route element={<ProtectedRoute/>}>
+            {/* "/" is just a redirect — not a page itself */}
+            <Route path="/" element={<WorkspaceRedirect />} />
+
+            {/* Hub — Full screen, NO sidebar */}
+            <Route path="/workspaces" element={<WorkspacesPage />} />
+
+            {/* Dashboard — WITH sidebar */}
             <Route element={<DashboardLayout/>}>
-                <Route path="/" element={<Dashboard />} />
+                
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/tasks" element={<Tasks/>}/>
                 <Route path="/messages" element={<Message/>}/>
                 <Route path="/team" element={<Team/>}/>

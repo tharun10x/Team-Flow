@@ -2,6 +2,7 @@ import {createContext, useContext, useState, useEffect, type ReactNode} from 're
 import api from "../api/axios";
 import { useAuth } from './AuthContext';
 
+
 export interface Workspace{
     id:number;
     name: string;
@@ -36,7 +37,16 @@ export const WorkspaceProvider = ({children}:{children:ReactNode})=>{
         try {
             setIsLoading(true);
             const response = await api.get("/workspaces");
-            setWorkspaces(response.data.data); // Remember ApiResponse format!
+            const data = response.data.data
+            setWorkspaces(data); // Remember ApiResponse format!
+
+            const saveId = localStorage.getItem("currentWorkspaceId");
+            if (saveId) {
+                const found = data.find((w:Workspace)=>w.id ===Number(saveId));
+                if (found) setCurrentWorkspace(found);
+            }
+
+
         } catch (error) {
             console.error("Failed to fetch workspaces", error);
         } finally {
@@ -46,7 +56,10 @@ export const WorkspaceProvider = ({children}:{children:ReactNode})=>{
 
     const selectWorkspace = (id: number) => {
         const found = workspaces.find(w => w.id === id);
-        if (found) setCurrentWorkspace(found);
+        if (found){
+            setCurrentWorkspace(found);
+            localStorage.setItem("currentWorkspaceId", String(id));
+        }
     }
     
     useEffect(()=>{
@@ -57,6 +70,7 @@ export const WorkspaceProvider = ({children}:{children:ReactNode})=>{
             // Clear out if they log out
             setWorkspaces([]);
             setCurrentWorkspace(null);
+            localStorage.removeItem("currentWorkspaceId");
         }
     }, [isAuthenticated])
 

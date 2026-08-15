@@ -1,3 +1,15 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic"
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "TeamFlow",
+      "request": "launch",
+      "mainClass": "com.teamflow.backedn.BackendApplication",
+      "env": {
+        "DB_USERNAME": "root",
+        "DB_PASSWORD": "TeamFlow@123"
+      }
+    }
+  ]
 }

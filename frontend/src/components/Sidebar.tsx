@@ -2,8 +2,11 @@ import { useState } from "react";
 import { LayoutDashboard, MessageSquare, CheckSquare, Users, Settings, Plus, ChevronDown, HelpCircle, Layers, MoreHorizontal, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
+import { useWorkspace } from "../context/WorkspaceContext";
+import { useNavigate } from "react-router-dom";
 
-// 1. Define the possible pages we can navigate to
+
+
 export type ViewId = "dashboard" | "messages" | "tasks" | "team" | "settings";
 
 const NAV_ITEMS = [
@@ -20,7 +23,7 @@ const PROJECTS = [
   { name: "Mobile App", color: "#22C55E", id: "p4" },
 ];
 
-// A tiny helper component for the Profile Avatar at the bottom
+
 function MeAvatar({ initial }: { initial: string }) {
   return (
     <div className="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-white shrink-0 bg-linear-to-br from-indigo-500 to-violet-600">
@@ -29,17 +32,21 @@ function MeAvatar({ initial }: { initial: string }) {
   );
 }
 
-// 2. The Main Sidebar Component
+
 export function Sidebar({ view, onNavigate }: { view: ViewId; onNavigate: (v: ViewId) => void }) {
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  // Bring in the Global Backpack to access the current user!
   const { user, logout } = useAuth();
-  
-  // Figure out the initial (first letter of name, or email, or 'U' as fallback)
   const initial = user?.name ? user.name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || 'U';
   const displayName = user?.name || 'User';
+  const { workspaces, currentWorkspace, selectWorkspace } = useWorkspace();
+  const navigate = useNavigate();
 
+  const handleSwitch = (id: number) => {
+    localStorage.setItem("currentWorkspaceId", String(id));
+    selectWorkspace(id);
+    setWorkspaceOpen(false);
+  };
   return (
     <aside className="w-60 shrink-0 h-screen bg-white border-r border-gray-200 flex flex-col">
       
@@ -58,13 +65,50 @@ export function Sidebar({ view, onNavigate }: { view: ViewId; onNavigate: (v: Vi
         {/* Workspace Dropdown */}
         <div className="relative">
           <button onClick={() => setWorkspaceOpen(!workspaceOpen)} className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-gray-50 transition-colors group">
-            <div className="w-6 h-6 rounded-md bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">S</div>
+            <div className="w-6 h-6 rounded-md bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">{currentWorkspace?.name.charAt(0)}</div>
             <div className="flex-1 text-left min-w-0">
-              <p className="text-sm font-semibold text-gray-800 truncate">Startup HQ</p>
-              <p className="text-xs text-gray-400">6 members</p>
+              <p className="text-sm font-semibold text-gray-800 truncate">{currentWorkspace?.name}</p>
+              <p className="text-xs text-gray-400">{currentWorkspace?.memberCount} members</p>
             </div>
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${workspaceOpen ? "rotate-180" : ""}`} />
           </button>
+          {workspaceOpen && (
+            <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.08)] border border-gray-100 z-50 py-1.5 overflow-hidden">
+    
+              {/* Other workspaces list */}
+              {workspaces
+                .filter(ws => ws.id !== currentWorkspace?.id)
+                .map(ws => (
+                  <button 
+                    key={ws.id} 
+                    onClick={() => handleSwitch(ws.id)}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="w-6 h-6 rounded-md bg-violet-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                      {ws.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 text-left min-w-0">
+                      <p className="text-sm font-semibold text-gray-800 truncate">{ws.name}</p>
+                      <p className="text-xs text-gray-400">{ws.memberCount} members</p>
+                    </div>
+                  </button>
+                ))
+              }
+
+              {/* Divider */}
+              <div className="my-1.5 border-t border-gray-100" />
+
+              {/* View all button */}
+              <button 
+                onClick={() => navigate("/workspaces")}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                View all Workspaces
+              </button>
+
+            </div>
+          )}
         </div>
 
         {/* Main Navigation Links */}
