@@ -76,7 +76,7 @@ export function JoinWorkspaceModal({ onClose }: JoinWorkspaceModalProps) {
 
     try {
       setIsLoading(true);
-      const response = await api.post("/workspaces/join", {
+      const response = await api.post("workspaces/join", {
         inviteCode: finalCode
       });
       

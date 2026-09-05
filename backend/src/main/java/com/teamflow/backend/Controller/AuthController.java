@@ -45,6 +45,7 @@ public class AuthController {
 
             return ResponseEntity.ok(ApiResponse.success(authResponse, "Login successful!"));
         } catch (Exception e) {
+             e.printStackTrace();
              return ResponseEntity.status(401).body(ApiResponse.error("Invalid email or password"));
         }
     }

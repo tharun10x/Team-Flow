@@ -8,6 +8,7 @@ import { Tasks } from "./pages/Tasks";
 import { Message } from "./pages/Message";
 import { Team } from "./pages/Team";
 import { Settings } from "./pages/Settings";
+import { WorkspaceSettings } from "./pages/WorkspaceSettings";
 import { NotFound } from "./pages/NotFound";
 import { WorkspacesPage } from "./pages/WorkspacesPage";
 import { useWorkspace } from "./context/WorkspaceContext";
@@ -52,6 +53,7 @@ export default function App() {
                 <Route path="/messages" element={<Message/>}/>
                 <Route path="/team" element={<Team/>}/>
                 <Route path="/settings" element={<Settings/>}/>
+                <Route path="/workspace-settings" element={<WorkspaceSettings/>}/>
             </Route>
         </Route>
 

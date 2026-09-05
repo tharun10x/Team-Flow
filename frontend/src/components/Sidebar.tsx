@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-export type ViewId = "dashboard" | "messages" | "tasks" | "team" | "settings";
+export type ViewId = "dashboard" | "messages" | "tasks" | "team" | "settings" | "workspace-settings";
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -75,9 +75,10 @@ export function Sidebar({ view, onNavigate }: { view: ViewId; onNavigate: (v: Vi
           {workspaceOpen && (
             <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.08)] border border-gray-100 z-50 py-1.5 overflow-hidden">
     
-              {/* Other workspaces list */}
+              {/* Other workspaces list (Max 5) */}
               {workspaces
                 .filter(ws => ws.id !== currentWorkspace?.id)
+                .slice(0, 5)
                 .map(ws => (
                   <button 
                     key={ws.id} 
@@ -150,7 +151,10 @@ export function Sidebar({ view, onNavigate }: { view: ViewId; onNavigate: (v: Vi
       {/* Bottom Settings & Profile Area */}
       <div className="border-t border-gray-100 px-3 py-4 flex flex-col gap-1">
         <button onClick={() => onNavigate("settings")} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${view === "settings" ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"}`}>
-          <Settings className="w-5 h-5 shrink-0" /> Settings
+          <Settings className="w-5 h-5 shrink-0" /> Personal Settings
+        </button>
+        <button onClick={() => onNavigate("workspace-settings")} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${view === "workspace-settings" ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"}`}>
+          <Layers className="w-5 h-5 shrink-0" /> Workspace Settings
         </button>
         <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all">
           <HelpCircle className="w-5 h-5 shrink-0" /> Help & Support

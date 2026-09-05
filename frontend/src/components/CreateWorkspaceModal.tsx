@@ -28,7 +28,7 @@ export function CreateWorkspaceModal({ onClose }: CreateWorkspaceModalProps) {
     try {
       setIsLoading(true);
       // 1. Call backend API
-      const response = await api.post("/workspaces", {
+      const response = await api.post("workspaces", {
         name,
         description
       });

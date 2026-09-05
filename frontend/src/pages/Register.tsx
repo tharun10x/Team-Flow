@@ -14,7 +14,7 @@ const handleRegister = async (e: SyntheticEvent)=>{
        try {
       // 1. Send the POST request to your Spring Boot backend
       // Remember we configured axios so '/auth/register' maps to 'http://localhost:8080/api/auth/register'
-      await api.post('/auth/register', { 
+      await api.post('auth/register', { 
         name: name, 
         email: email, 
         password: password 
@@ -22,9 +22,10 @@ const handleRegister = async (e: SyntheticEvent)=>{
       alert("Registration successful! Please login.");
       navigate('/login');
       
-    } catch (error) {
-      alert("Registration failed! Email might already be taken.");
-      console.error(error);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || error?.message || "Unknown error";
+      alert("Registration failed: " + msg);
+      console.error("Register error:", error);
     }
 
 }

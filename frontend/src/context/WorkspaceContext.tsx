@@ -36,7 +36,7 @@ export const WorkspaceProvider = ({children}:{children:ReactNode})=>{
     const fetchWorkspaces = async ()=>{
         try {
             setIsLoading(true);
-            const response = await api.get("/workspaces");
+            const response = await api.get("workspaces");
             const data = response.data.data
             setWorkspaces(data); // Remember ApiResponse format!
 

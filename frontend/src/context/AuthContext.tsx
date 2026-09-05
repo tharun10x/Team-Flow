@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (token) {
         try {  
           // If we have a token, fetch their latest profile from the backend!
-          const response = await api.get('/users/me'); 
+          const response = await api.get('users/me'); 
           setUser(response.data.data); // (Remember our ApiResponse wrapper puts data inside .data!)
           setIsAuthenticated(true);
         } catch (error) {
