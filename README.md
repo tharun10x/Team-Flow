@@ -296,19 +296,3 @@ Make sure you have the following installed on your machine:
 | *Manage workspace members, transfer ownership, or configure general details* | *Granular permissions for Owners, Admins, and Members* |
 
 ---
-
-## 🤝 Contributing
-
-Contributions are welcome! If you would like to contribute:
-
-1. Fork the Project.
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the Branch (`git push origin feature/AmazingFeature`).
-5. Open a Pull Request.
-
----
-
-## 📄 License
-
-This project is open-source and available under the [MIT License](LICENSE).
