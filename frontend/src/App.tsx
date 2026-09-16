@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "sonner";
 import { Login } from "./pages/Login";
 import Register from "./pages/Register";
 import { DashboardLayout } from "./components/DashboardLayout";
@@ -29,8 +30,9 @@ function WorkspaceRedirect() {
 
 export default function App() {
   return (
-
-    <BrowserRouter>
+    <>
+      <Toaster position="top-right" richColors />
+      <BrowserRouter>
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
@@ -60,5 +62,6 @@ export default function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
+    </>
   );
 }
