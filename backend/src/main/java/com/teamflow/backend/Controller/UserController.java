@@ -14,7 +14,7 @@ import com.teamflow.backend.dto.ApiResponse;
 import com.teamflow.backend.dto.UpdateProfileRequest;
 import com.teamflow.backend.dto.UserProfileResponse;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 
 @RestController
