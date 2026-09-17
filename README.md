@@ -28,8 +28,6 @@
   - [Backend Setup](#backend-setup)
   - [Frontend Setup](#frontend-setup)
 - [Screenshots & UI Showcase](#-screenshots--ui-showcase)
-- [Contributing](#-contributing)
-- [License](#-license)
 
 ---
 
