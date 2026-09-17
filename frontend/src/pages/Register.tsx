@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import loginBg from '../assets/login-bg.jpg';
 import { Layers } from 'lucide-react';
+import { toast } from "sonner";
 
 export default function Register(){
 const [email, setEmail] = useState('');
@@ -12,19 +13,17 @@ const navigate = useNavigate();
 const handleRegister = async (e: SyntheticEvent)=>{
    e.preventDefault();
        try {
-      // 1. Send the POST request to your Spring Boot backend
-      // Remember we configured axios so '/auth/register' maps to 'http://localhost:8080/api/auth/register'
       await api.post('auth/register', { 
         name: name, 
         email: email, 
         password: password 
       });
-      alert("Registration successful! Please login.");
+      toast.success("Registration successful! Please login.")
       navigate('/login');
       
     } catch (error: any) {
       const msg = error?.response?.data?.message || error?.message || "Unknown error";
-      alert("Registration failed: " + msg);
+      toast.error("Registration failed: " + msg);
       console.error("Register error:", error);
     }
 
@@ -51,7 +50,7 @@ return(
             <div className="w-12 h-12 rounded-xl bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-md mb-4">
               <Layers className="w-6 h-6 text-white" strokeWidth={2.5} />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Welcome back</h1>
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Create your account</h1>
             <p className="text-sm text-gray-500 mt-2">Enter your credentials to access TeamFlow</p>
           </div>
 

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'sonner';
 
 export function Login() {
 const [email, setEmail] = useState(localStorage.getItem('savedEmail') ||'');
@@ -38,11 +39,11 @@ const { login } = useAuth();
         else{
           localStorage.removeItem('savedEmail');  
         }
-        alert("Login successful");
+        toast.success("Login successful");
         navigate('/');
 
     } catch (error) {
-        alert("Login Failed Email Or Password might be incorrect")
+        toast.error("Login Failed Email Or Password might be incorrect")
         console.log(error)
         
     }
