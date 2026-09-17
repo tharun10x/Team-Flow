@@ -14,6 +14,7 @@ import { WorkspacesPage } from "./pages/WorkspacesPage";
 import { useWorkspace } from "./context/WorkspaceContext";
 import { ChatArea } from "./pages/ChatArea";
 import { MessageLayout } from "./components/MessagesLayout";
+import { ChannelRedirect } from "./components/ChannelRedirect";
 
 
 function WorkspaceRedirect() {
@@ -51,6 +52,7 @@ export default function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/tasks" element={<Tasks/>}/>
                 <Route path="/messages" element={<MessageLayout/>}>
+                  <Route index element={<ChannelRedirect />} />
                   <Route path=":channelId" element={<ChatArea/>}/>
                 </Route>
                 <Route path="/team" element={<Team/>}/>
