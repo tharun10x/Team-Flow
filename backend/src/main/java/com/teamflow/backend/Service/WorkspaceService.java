@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamflow.backend.Entity.Channel;
 import com.teamflow.backend.Entity.User;
 import com.teamflow.backend.Entity.Workspace;
 import com.teamflow.backend.Entity.WorkspaceMember;
 import com.teamflow.backend.Entity.Enum.Role;
+import com.teamflow.backend.Repository.ChannelRepository;
 import com.teamflow.backend.Repository.UserRepository;
 import com.teamflow.backend.Repository.WorkspaceMemberRepository;
 import com.teamflow.backend.Repository.WorkspaceRepository;
@@ -30,6 +32,9 @@ public class WorkspaceService {
     @Autowired
     WorkspaceMemberRepository workspaceMemberRepository;
     
+    @Autowired 
+    ChannelRepository channelRepository;
+
     @Transactional
     public WorkspaceResponse createWorkspace(WorkspaceRequest request, Long userId){
         User owner = userRepo.findById(userId)
@@ -51,6 +56,14 @@ public class WorkspaceService {
                                 .role(Role.OWNER)
                                 .build();
         workspaceMemberRepository.save(member);
+
+        //this code block makes a general channel everytime a new workspace gets created
+        Channel generalChannel = Channel.builder()
+                .name("general")
+                .workspace(workspace)
+                .isDirectMessage(false)
+                .build();
+        channelRepository.save(generalChannel);
         
         return toResponse(workspace, userId);
     }
