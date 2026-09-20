@@ -42,4 +42,8 @@ public class UserService {
            .bio(user.getBio())
            .build(); 
     }
+    public User getUser(String email){
+        return userRepo.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }
