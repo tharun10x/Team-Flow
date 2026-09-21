@@ -3,6 +3,7 @@ package com.teamflow.backend.Config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -47,10 +48,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
                     String authHeader = accessor.getFirstNativeHeader("Authorization");
+
                     if (authHeader != null && authHeader.startsWith("Bearer ")) {
                         String token = authHeader.substring(7);
+                        
                         if (tokenProvider.validateToken(token)) {
                             String username = tokenProvider.getUsernameFromToken(token);
                             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -58,8 +61,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                                     userDetails, null, userDetails.getAuthorities());
                             accessor.setUser(authentication);
                         }
+                        else{
+                            throw new MessageDeliveryException("Unauthorized: invalid or expired token");
+                        }
+                    }
+                    else{
+                        throw new MessageDeliveryException("Unauthorized: missing token");
                     }
                 }
+                
                 return message;
             }
         });
