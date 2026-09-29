@@ -50,6 +50,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 
                 if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
                     String authHeader = accessor.getFirstNativeHeader("Authorization");
+                     System.out.println("STOMP Authorization: " + authHeader);
 
                     if (authHeader != null && authHeader.startsWith("Bearer ")) {
                         String token = authHeader.substring(7);
