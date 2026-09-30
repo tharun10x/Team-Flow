@@ -2,6 +2,9 @@ package com.teamflow.backend.dto;
 
 import java.time.Instant;
 
+import com.teamflow.backend.Entity.Message;
+import com.teamflow.backend.Entity.Enum.MessageType;
+import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +22,14 @@ public class MessageResponse {
     private String senderAvatar; 
     private Instant timestamp;
     private Long channelId;
+    private MessageType type;
+    private Boolean isEdited;
+    private Boolean isDeleted;
+    private Long replyToId;
+    private Instant updatedAt;
+
+    @PreUpdate 
+    protected void onUpdate(){
+        this.updatedAt = Instant.now();
+    }
 }

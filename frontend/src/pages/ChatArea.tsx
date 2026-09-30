@@ -2,9 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom"; 
 import { useChannel } from "../context/ChannelContext"; 
 import api from "../api/axios";
-import { Send } from "lucide-react";
+import { Send, MoreVertical, Pencil, Trash2, X, Check } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { useWorkspace } from "../context/WorkspaceContext";
 import { useStompClient } from "../hooks/useStompClient";
 
 interface ChatMessage {
@@ -15,6 +14,8 @@ interface ChatMessage {
   senderAvatar: string;
   timestamp?: string;
   channelId: number;
+  isEdited?:boolean;
+  isDeleted?:boolean;
 }
 
 export function ChatArea() {
@@ -29,6 +30,45 @@ export function ChatArea() {
 
   const { client, isConnected } = useStompClient();
 
+  const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
+  const [editingMessageId, setEditingMessageId] = useState<number | null>(null);
+  const [editText, setEditText] = useState("");
+
+  // Start editing
+  const handleStartEdit = (msg: ChatMessage) => {
+    setEditingMessageId(msg.id!);
+    setEditText(msg.content);
+    setActiveMenuId(null);
+  };
+
+  // Save edited message via PUT
+  const handleSaveEdit = async (messageId: number) => {
+    if (!editText.trim()) return;
+    try {
+      await api.put(`messages/${messageId}`, { content: editText });
+      setEditingMessageId(null);
+      setEditText("");
+    } catch (error) {
+      console.error("Failed to edit message", error);
+    }
+  };
+
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setEditingMessageId(null);
+    setEditText("");
+  };
+
+  // Delete message via DELETE
+  const handleDelete = async (messageId: number) => {
+    if (!window.confirm("Are you sure you want to delete this message?")) return;
+    try {
+      await api.delete(`messages/${messageId}`);
+      setActiveMenuId(null);
+    } catch (error) {
+      console.error("Failed to delete message", error);
+    }
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -55,8 +95,15 @@ export function ChatArea() {
 
     if(!channelId || !client || !isConnected) return;
     const subscription = client.subscribe(`/topic/channel/${channelId}`,(msg)=>{
-    const newMsg : ChatMessage = JSON.parse(msg.body);
-    setMessages((prev) =>  [...prev, newMsg]);
+      const newMsg : ChatMessage = JSON.parse(msg.body);
+      
+      setMessages((prev) =>{  
+        const exists = prev.some((m) => m.id === newMsg.id);
+        if (exists) {
+          return prev.map((m) => (m.id === newMsg.id ? newMsg : m));
+        }
+        return [...prev, newMsg];
+      });
     });
 
     return () => {
@@ -64,7 +111,7 @@ export function ChatArea() {
     };
 
   },[channelId,client,isConnected]);
-  
+
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,35 +170,117 @@ export function ChatArea() {
           </div>
         ) : (
           messages.map((msg, idx) => {
-            const isMe = Number(msg.senderId) === Number(user?.id) || (Boolean(msg.senderName) && msg.senderName === user?.name);
-                       
-            return (
-              <div key={idx} className={`flex gap-3 ${isMe ? 'flex-row-reverse' : ''} animate-in fade-in duration-200`}>
-                <div className="w-8 h-8 rounded-full bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-sm">
-                  {msg.senderAvatar || msg.senderName?.charAt(0).toUpperCase()}
+          const isMe = Number(msg.senderId) === Number(user?.id) || (Boolean(msg.senderName) && msg.senderName === user?.name);
+          const isEditing = editingMessageId === msg.id;
+
+          return (
+            <div 
+              key={msg.id || idx} 
+              className={`relative group flex gap-3 ${isMe ? 'flex-row-reverse' : ''} animate-in fade-in duration-200`}
+            >
+              {/* Avatar */}
+              <div className="w-8 h-8 rounded-full bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-sm">
+                {msg.senderAvatar || msg.senderName?.charAt(0).toUpperCase()}
+              </div>
+
+              <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[75%]`}>
+                {/* Header: Name + Time + (edited) */}
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="font-semibold text-gray-900 text-xs">{isMe ? 'You' : msg.senderName}</span>
+                  
+                  {msg.timestamp && (
+                    <span className="text-[10px] text-gray-400">
+                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  )}
+
+                  {msg.isEdited && !msg.isDeleted && (
+                    <span className="text-[10px] text-gray-400 italic">(edited)</span>
+                  )}
                 </div>
-                <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[75%]`}>
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <span className="font-semibold text-gray-900 text-xs">{isMe ? 'You' : msg.senderName}</span>
-                    
-                    {msg.timestamp && (
-                      <span className="text-[10px] text-gray-400">
-                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
+
+                {/* Message Content OR Inline Edit Mode */}
+                {isEditing ? (
+                  <div className="flex items-center gap-2 mt-1 w-full">
+                    <input
+                      type="text"
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSaveEdit(msg.id!);
+                        if (e.key === "Escape") handleCancelEdit();
+                      }}
+                      autoFocus
+                      className="px-3 py-1.5 text-sm border border-indigo-400 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900"
+                    />
+                    <button
+                      onClick={() => handleSaveEdit(msg.id!)}
+                      className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg"
+                      title="Save"
+                    >
+                      <Check className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="p-1.5 text-gray-400 hover:bg-gray-100 rounded-lg"
+                      title="Cancel"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="relative group/bubble flex items-center gap-1">
+                    {/* The Message Bubble */}
+                    <div
+                      className={`px-4 py-2 text-sm leading-relaxed wrap-break-word rounded-2xl ${
+                        msg.isDeleted
+                          ? 'bg-gray-100 text-gray-400 italic border border-gray-200'
+                          : isMe
+                          ? 'bg-indigo-600 text-white rounded-tr-none'
+                          : 'bg-gray-100 text-gray-800 rounded-tl-none'
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+
+                    {/* "..." Action Menu (Only on own messages and if not deleted) */}
+                    {isMe && !msg.isDeleted && (
+                      <div className="relative">
+                        <button
+                          onClick={() => setActiveMenuId(activeMenuId === msg.id ? null : msg.id!)}
+                          className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all"
+                          title="More actions"
+                        >
+                          <MoreVertical className="w-4 h-4" />
+                        </button>
+
+                        {/* Dropdown Popup */}
+                        {activeMenuId === msg.id && (
+                          <div className="absolute right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-20 w-28 animate-in fade-in zoom-in-95">
+                            <button
+                              onClick={() => handleStartEdit(msg)}
+                              className="w-full px-3 py-1.5 text-xs text-left text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"
+                            >
+                              <Pencil className="w-3.5 h-3.5 text-gray-500" />
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete(msg.id!)}
+                              className="w-full px-3 py-1.5 text-xs text-left text-red-600 hover:bg-red-50 flex items-center gap-2 font-medium"
+                            >
+                              <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
-                  <div className={`px-4 py-2 text-sm leading-relaxed wrap-break-word rounded-2xl
-                    ${isMe 
-                      ? 'bg-indigo-600 text-white rounded-tr-none' 
-                      : 'bg-gray-100 text-gray-800 rounded-tl-none'
-                    }`
-                  }>
-                    {msg.content}
-                  </div>
-                </div>
+                )}
               </div>
-            );
-          })
+            </div>
+          );
+        })
         )}
         <div ref={messagesEndRef} />
       </div>
