@@ -27,7 +27,7 @@ public class MessageReaction {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-@jakarta.persistence.Column(nullable = false)
+	@jakarta.persistence.Column(nullable = false)
 	private String emoji;
 
 	@ManyToOne

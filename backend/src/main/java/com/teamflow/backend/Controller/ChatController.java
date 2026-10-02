@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +20,7 @@ import com.teamflow.backend.Service.MessageService;
 import com.teamflow.backend.dto.ApiResponse;
 import com.teamflow.backend.dto.ChatMessageDto;
 import com.teamflow.backend.dto.MessageResponse;
-
+import com.teamflow.backend.dto.ReactionRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -98,6 +99,22 @@ public class ChatController {
             MessageResponse deleted = messageService.deleteMessage(id, username);
             return ResponseEntity.ok(ApiResponse.success(deleted, "Messages deleted successfully"));
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    @PostMapping ("/api/messages/{id}/reactions")
+    public ResponseEntity<ApiResponse> addReactions(
+        @PathVariable Long id,
+        Authentication authentication,
+        @RequestBody ReactionRequest req
+    ){
+        try {
+            String username = authentication.getName();
+            MessageResponse response = messageService.toggleReaction(id, req.getEmoji(), username);
+            return ResponseEntity.ok(ApiResponse.success(response, "Reaction toggled successfully"));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body(ApiResponse.error(e.getMessage()));

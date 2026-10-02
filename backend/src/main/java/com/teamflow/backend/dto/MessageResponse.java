@@ -1,10 +1,9 @@
 package com.teamflow.backend.dto;
 
 import java.time.Instant;
+import java.util.List;
 
-import com.teamflow.backend.Entity.Message;
 import com.teamflow.backend.Entity.Enum.MessageType;
-import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,8 +27,6 @@ public class MessageResponse {
     private Long replyToId;
     private Instant updatedAt;
 
-    @PreUpdate 
-    protected void onUpdate(){
-        this.updatedAt = Instant.now();
-    }
+    private List<ReactionResponse> reactions;
+
 }

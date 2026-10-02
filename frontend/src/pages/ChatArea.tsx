@@ -6,8 +6,14 @@ import { Send, MoreVertical, Pencil, Trash2, X, Check } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useStompClient } from "../hooks/useStompClient";
 
+
+interface ReactionData {
+  emoji: string;
+  count: number;
+  userIds: number[];   // ← matches your backend field name
+}
 interface ChatMessage {
-  id?: number;
+  id: number;
   content: string;
   senderId: number;
   senderName: string;
@@ -16,6 +22,7 @@ interface ChatMessage {
   channelId: number;
   isEdited?:boolean;
   isDeleted?:boolean;
+  reactions:ReactionData[];
 }
 
 export function ChatArea() {
@@ -33,6 +40,8 @@ export function ChatArea() {
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
+
+  const[showPickerForMessageId, setShowPickerForMessageId] = useState<number | null >(null);
 
   // Start editing
   const handleStartEdit = (msg: ChatMessage) => {
@@ -70,11 +79,20 @@ export function ChatArea() {
     }
   };
 
+  const handleReaction = async (messageId:number, emoji:string)=>{ 
+    try {
+      await api.post(`messages/${messageId}/reactions`, {emoji});
+      setShowPickerForMessageId(null);
+    } catch (error) {
+      console.error("Failed to delete message", error);
+    }
+  }
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  //This useEffect runs when the channelId changes
+  // *This useEffect runs when the channelId changes
   useEffect(() => {
     if (!channelId) return;
 
@@ -90,7 +108,7 @@ export function ChatArea() {
 
   }, [channelId]); 
 
-  //This useEffect runs for any chanegs in channelId,client,isConnected
+  // *This useEffect runs for any chanegs in channelId,client,isConnected
   useEffect(()=>{
 
     if(!channelId || !client || !isConnected) return;
@@ -229,6 +247,7 @@ export function ChatArea() {
                     </button>
                   </div>
                 ) : (
+                  <>
                   <div className="relative group/bubble flex items-center gap-1">
                     {/* The Message Bubble */}
                     <div
@@ -239,9 +258,24 @@ export function ChatArea() {
                           ? 'bg-indigo-600 text-white rounded-tr-none'
                           : 'bg-gray-100 text-gray-800 rounded-tl-none'
                       }`}
+                      onClick={()=>setShowPickerForMessageId(msg.id)}
                     >
                       {msg.content}
                     </div>
+                    {
+                      showPickerForMessageId === msg.id &&(
+                       <div className="absolute -top-10 right-2 bg-white border border-gray-200 rounded-full shadow-md px-2 py-1 flex items-center gap-1 z-30 animate-in fade-in zoom-in-95 duration-150">
+                          {['👍', '❤️', '😂', '🎉', '🚀'].map((emoji) => (
+                            <button
+                              key={emoji}
+                              onClick={() => handleReaction(msg.id!, emoji)}
+                              className="p-1 text-base hover:scale-125 transition-transform rounded-full hover:bg-gray-100"
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
+                      )}
 
                     {/* "..." Action Menu (Only on own messages and if not deleted) */}
                     {isMe && !msg.isDeleted && (
@@ -276,6 +310,29 @@ export function ChatArea() {
                       </div>
                     )}
                   </div>
+                  {/* The reaction bubbles under the message bubble */}
+                  {msg.reactions && (msg.reactions.length > 0) && (
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {msg.reactions.map((r) => {
+                        const iReacted = r.userIds?.includes(Number(user?.id));
+                        return (
+                          <button
+                            key={r.emoji}
+                            onClick={() => handleReaction(msg.id!, r.emoji)}
+                            className={`flex items-center gap-1 px-2 py-0.5 text-xs rounded-full border transition-all ${
+                              iReacted
+                                ? 'bg-indigo-50 border-indigo-300 text-indigo-700 font-medium'
+                                : 'bg-gray-100 border-gray-200 text-gray-600 hover:bg-gray-200'
+                            }`}
+                          >
+                            <span>{r.emoji}</span>
+                            <span>{r.count}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                  </>
                 )}
               </div>
             </div>
