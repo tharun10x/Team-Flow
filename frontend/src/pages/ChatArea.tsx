@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom"; 
 import { useChannel } from "../context/ChannelContext"; 
 import api from "../api/axios";
-import { Send, MoreVertical, Pencil, Trash2, X, Check } from "lucide-react";
+import { Send, MoreVertical, Pencil, Trash2, X, Check, Reply } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useStompClient } from "../hooks/useStompClient";
 
@@ -11,6 +11,11 @@ interface ReactionData {
   emoji: string;
   count: number;
   userIds: number[];   // ← matches your backend field name
+}
+interface ReplyPreviewData {
+  id: number;
+  senderName: string;
+  content: string;
 }
 interface ChatMessage {
   id: number;
@@ -23,6 +28,8 @@ interface ChatMessage {
   isEdited?:boolean;
   isDeleted?:boolean;
   reactions:ReactionData[];
+  replyToId?: number | null;
+  replyTo?: ReplyPreviewData | null;
 }
 
 export function ChatArea() {
@@ -43,6 +50,7 @@ export function ChatArea() {
 
   const[showPickerForMessageId, setShowPickerForMessageId] = useState<number | null >(null);
 
+  const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null);
   // Start editing
   const handleStartEdit = (msg: ChatMessage) => {
     setEditingMessageId(msg.id!);
@@ -137,7 +145,8 @@ export function ChatArea() {
 
     const chatMessage = {
       content: input,
-      channelId: Number(channelId)
+      channelId: Number(channelId),
+      replyToId: replyingTo ? replyingTo.id : null
     };
 
     client.publish({
@@ -146,6 +155,7 @@ export function ChatArea() {
     });
 
     setInput("");
+    setReplyingTo(null);
   };
 
   if (!channelId) {
@@ -216,7 +226,7 @@ export function ChatArea() {
                     <span className="text-[10px] text-gray-400 italic">(edited)</span>
                   )}
                 </div>
-
+                {/* The reply button to start replying */}
                 {/* Message Content OR Inline Edit Mode */}
                 {isEditing ? (
                   <div className="flex items-center gap-2 mt-1 w-full">
@@ -260,8 +270,35 @@ export function ChatArea() {
                       }`}
                       onClick={()=>setShowPickerForMessageId(msg.id)}
                     >
+                      {msg.replyTo && (
+                        <div
+                          className={`mb-1.5 text-xs border-l-2 pl-2 py-0.5 rounded ${
+                            isMe
+                              ? 'border-indigo-300 bg-gray-700/40 text-indigo-200'
+                              : 'border-indigo-500 bg-gray-200/70 text-gray-600'
+                          }`}
+                        >
+                          <div   className={`font-semibold text-[11px] leading-tight ${
+                              isMe ? 'text-indigo-200' : 'text-indigo-600'
+                            }`}>
+                            {msg.replyTo.senderName}
+                          </div>
+                          <div className="truncate text-[11px] opacity-90">
+                            {msg.replyTo.content}
+                          </div>
+                        </div>
+                      )}
                       {msg.content}
                     </div>
+                    {!msg.isDeleted && (
+                      <button
+                        onClick={() => setReplyingTo(msg)}
+                        className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-indigo-600 rounded-full hover:bg-gray-100 transition-all"
+                        title="Reply"
+                      >
+                        <Reply className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                     {
                       showPickerForMessageId === msg.id &&(
                        <div className="absolute -top-10 right-2 bg-white border border-gray-200 rounded-full shadow-md px-2 py-1 flex items-center gap-1 z-30 animate-in fade-in zoom-in-95 duration-150">
@@ -341,7 +378,21 @@ export function ChatArea() {
         )}
         <div ref={messagesEndRef} />
       </div>
-
+        {replyingTo && (
+          <div className="flex items-center justify-between px-4 py-2 mb-2 bg-indigo-50/70 border border-indigo-100 rounded-xl text-xs">
+            <div className="flex items-center gap-2 truncate">
+              <Reply className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <span className="text-gray-500">Replying to <strong className="text-gray-900">{replyingTo.senderName}</strong>:</span>
+              <span className="truncate text-gray-500 italic">"{replyingTo.content}"</span>
+            </div>
+            <button
+              onClick={() => setReplyingTo(null)}
+              className="text-gray-400 hover:text-gray-600 p-1"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
       {/* Input Area */}
       <div className="p-4 bg-white border-t border-gray-200 shrink-0">
         <form onSubmit={handleSend} className="relative flex items-center">

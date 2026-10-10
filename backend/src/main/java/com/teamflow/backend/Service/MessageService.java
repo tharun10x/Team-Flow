@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import com.teamflow.backend.Entity.Channel;
 import com.teamflow.backend.Entity.Message;
 import com.teamflow.backend.Entity.MessageReaction;
 import com.teamflow.backend.Entity.User;
@@ -29,9 +30,6 @@ import com.teamflow.backend.dto.MessageResponse;
 import com.teamflow.backend.dto.ReactionResponse;
 
 import jakarta.transaction.Transactional;
-
-import com.teamflow.backend.Entity.Channel;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -61,13 +59,22 @@ public class MessageService {
                 
         validateMembership(channel.getWorkspace().getId(), sender.getId());
 
-        // Optionally: Check if user is a member of the workspace here!
-
         Message message = Message.builder()
                 .content(chatMessageDto.getContent())
                 .sender(sender)
                 .channel(channel)
                 .build();
+        Long replyToId = chatMessageDto.getReplyToId();
+
+        if (replyToId != null) {
+            Message msg = messageRepository.findById(replyToId)
+                .orElseThrow(() -> new RuntimeException("Replied message not found"));
+
+            if (!msg.getChannel().getId().equals(channel.getId())) {
+                throw new RuntimeException("Cannot reply to a message from a different channel");
+            }
+            message.setReplyTo(msg);
+        }
 
         Message savedMessage = messageRepository.save(message);
 
@@ -256,6 +263,21 @@ public class MessageService {
                 }
             )
             .toList();
+        MessageResponse.ReplyPreview replyPreview = null;
+        if (message.getReplyTo() != null) {
+            Message parent = message.getReplyTo();
+            String parentSender = (parent.getSender() != null && parent.getSender().getName() != null)
+                    ? parent.getSender().getName()
+                    : "Unknown";
+            String parentContent = Boolean.TRUE.equals(parent.getIsDeleted())
+                    ? "This message was deleted"
+                    : parent.getContent();
+            replyPreview = MessageResponse.ReplyPreview.builder()
+                    .id(parent.getId())
+                    .senderName(parentSender)
+                    .content(parentContent)
+                    .build();
+        }
 
         return MessageResponse.builder()
                 .id(message.getId())
@@ -269,6 +291,7 @@ public class MessageService {
                 .isEdited(message.getIsEdited())
                 .isDeleted(message.getIsDeleted())
                 .replyToId(message.getReplyTo() != null ? message.getReplyTo().getId() : null)
+                .replyTo(replyPreview)
                 .updatedAt(message.getUpdatedAt())
                 .reactions(reactionResponse)
                 .build();

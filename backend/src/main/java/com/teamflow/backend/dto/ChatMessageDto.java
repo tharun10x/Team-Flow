@@ -6,4 +6,5 @@ import lombok.Data;
 public class ChatMessageDto {
     private String content;
     private Long channelId;
+    private Long replyToId;
 }

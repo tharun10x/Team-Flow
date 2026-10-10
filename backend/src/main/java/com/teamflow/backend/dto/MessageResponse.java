@@ -29,4 +29,15 @@ public class MessageResponse {
 
     private List<ReactionResponse> reactions;
 
+    private ReplyPreview replyTo;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReplyPreview{
+        private Long id;
+        private String senderName;
+        private String content;
+    }
 }
