@@ -19,7 +19,7 @@ public class TaskResponse {
     private TaskPriority priority;
     private LocalDateTime deadline;
     private LocalDateTime completedAt;
-    private boolean isOverdue;
+    private Boolean isOverdue;
     private UserSummary assignee;
     private UserSummary createdBy;
     private int commentCount;

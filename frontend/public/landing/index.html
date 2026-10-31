@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TeamFlow: channels and tasks for student project groups</title>
+  <meta name="description" content="TeamFlow keeps a student project group’s chat, tasks and deadlines in one workspace.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./landing.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="mast">
+    <div class="container mast__row">
+      <a class="mast__link" href="https://github.com/tharun10x/Team-Flow">Source</a>
+      <a class="mast__mark" href="/landing/" aria-label="TeamFlow home">TeamFlow</a>
+      <a class="mast__link mast__link--end" href="/login">Log in</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <canvas class="hero__field" aria-hidden="true"></canvas>
+      <div class="container hero__grid">
+        <div class="hero__text">
+          <h1 id="hero-title">Your group project, in one workspace</h1>
+          <p class="lead">Channels, tasks and deadlines for student project groups, kept together.</p>
+          <div class="hero__actions">
+            <a class="key key--primary" href="/login">Open TeamFlow</a>
+            <a class="key" href="#join">Join with a code</a>
+          </div>
+        </div>
+
+        <figure class="hero__shot" data-slot="hero" data-kind="product" data-alt="The Tasks page of a real workspace: the four counts, the filters and six or so tasks with one overdue">
+          <div class="ui ui-board">
+            <div class="ui-top">
+              <span class="ui-ws">Example Capstone</span>
+              <span class="ui-tabs"><span class="ui-tab">#general</span><span class="ui-tab ui-tab--on">Tasks</span><span class="ui-tab">Team</span></span>
+            </div>
+            <dl class="ui-counts">
+              <div><dt>Total</dt><dd class="num">12</dd></div>
+              <div><dt>In Progress</dt><dd class="num">4</dd></div>
+              <div><dt>Completed</dt><dd class="num">6</dd></div>
+              <div class="ui-counts__late"><dt>Overdue</dt><dd class="num">1</dd></div>
+            </dl>
+            <div class="ui-filters">
+              <span class="ui-search">Search tasks</span>
+              <span class="ui-chip">All Statuses</span>
+              <span class="ui-chip">All Priorities</span>
+              <span class="ui-chip ui-chip--on">Assigned to Me</span>
+            </div>
+            <ul class="ui-tasks">
+              <li class="ui-task ui-task--late"><span class="ui-task__t">Book the lab for the demo</span><span class="ui-who">MR</span><span class="ui-pri">Low</span><span class="ui-st">To Do</span><span class="ui-due">Overdue, 29 Oct</span></li>
+              <li class="ui-task"><span class="ui-task__t">Draft the literature review</span><span class="ui-who">RK</span><span class="ui-pri ui-pri--hi">High</span><span class="ui-st ui-st--go">In Progress</span><span class="ui-due">4 Nov</span></li>
+              <li class="ui-task"><span class="ui-task__t">Fix the chart export</span><span class="ui-who">AS</span><span class="ui-pri ui-pri--crit">Critical</span><span class="ui-st ui-st--block">Blocked</span><span class="ui-due">6 Nov</span></li>
+              <li class="ui-task"><span class="ui-task__t">Slides for the mid review</span><span class="ui-who">TP</span><span class="ui-pri ui-pri--hi">High</span><span class="ui-st">To Do</span><span class="ui-due">10 Nov</span></li>
+              <li class="ui-task"><span class="ui-task__t">Write the survey questions</span><span class="ui-who">AS</span><span class="ui-pri">Medium</span><span class="ui-st ui-st--done">Completed</span><span class="ui-due">20 Oct</span></li>
+              <li class="ui-task"><span class="ui-task__t">Build the login screen</span><span class="ui-who">TP</span><span class="ui-pri">Medium</span><span class="ui-st ui-st--done">Completed</span><span class="ui-due">27 Oct</span></li>
+            </ul>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="tour" aria-labelledby="tour-title">
+      <div class="container">
+        <div class="head-split">
+          <h2 id="tour-title">Talk where the tasks live</h2>
+          <p class="lead">Every workspace has its own channels and its own task list.</p>
+        </div>
+
+        <div class="switch" data-switch>
+          <div class="tray" role="tablist" aria-label="Screens">
+            <button class="tray__key" type="button" role="tab" id="tab-chat" aria-selected="true" aria-controls="panel-chat">Channel</button>
+            <button class="tray__key" type="button" role="tab" id="tab-task" aria-selected="false" aria-controls="panel-task" tabindex="-1">Task thread</button>
+          </div>
+
+          <figure class="panel" role="tabpanel" id="panel-chat" aria-labelledby="tab-chat">
+            <div class="panel__shot" data-slot="chat" data-kind="product" data-alt="A channel in a real workspace with a reply, an edited message and a reaction">
+              <div class="ui ui-chat">
+                <aside class="ui-side">
+                  <span class="ui-side__ws">Example Capstone</span>
+                  <span class="ui-side__h">Channels</span>
+                  <span class="ui-chan ui-chan--on">#general</span>
+                  <span class="ui-chan">#design</span>
+                  <span class="ui-chan">#report</span>
+                  <span class="ui-chan">#demo-day</span>
+                </aside>
+                <div class="ui-msgs">
+                  <div class="ui-msg"><span class="ui-who">RK</span><div><b>Ravi</b><p>Uploaded the survey results to the drive. 30 replies so far.</p></div></div>
+                  <div class="ui-msg"><span class="ui-who">AS</span><div><b>Asha</b><blockquote>Uploaded the survey results to the drive…</blockquote><p>Nice. I’ll turn them into charts tonight. <span class="ui-edited">(edited)</span></p><span class="ui-react"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Thumbs up"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>2</span></div></div>
+                  <div class="ui-msg ui-msg--gone"><span class="ui-who">MR</span><div><b>Meera</b><p>This message was deleted</p></div></div>
+                  <div class="ui-msg"><span class="ui-who">TP</span><div><b>Tharun</b><p>Lab is still unbooked. Who has the form?</p></div></div>
+                  <div class="ui-input"><span>Message #general</span><span class="ui-send">Send</span></div>
+                </div>
+              </div>
+            </div>
+            <figcaption>Replies, edits, deletes and reactions reach everyone in the channel without a refresh.</figcaption>
+          </figure>
+
+          <figure class="panel" role="tabpanel" id="panel-task" aria-labelledby="tab-task" hidden>
+            <div class="panel__shot" data-slot="task" data-kind="product" data-alt="An open task in a real workspace with its details and comment thread">
+              <div class="ui ui-detail">
+                <div class="ui-detail__main">
+                  <span class="ui-pri ui-pri--crit">Critical</span>
+                  <h3 class="ui-detail__t">Fix the chart export</h3>
+                  <p class="ui-detail__d">The PDF export cuts off the last bar of every chart. Needs fixing before the mid review.</p>
+                  <dl class="ui-facts">
+                    <div><dt>Assignee</dt><dd>Asha</dd></div>
+                    <div><dt>Deadline</dt><dd>6 Nov</dd></div>
+                    <div><dt>Status</dt><dd class="ui-select">Blocked</dd></div>
+                  </dl>
+                </div>
+                <div class="ui-thread">
+                  <span class="ui-side__h">Comments</span>
+                  <div class="ui-msg"><span class="ui-who">AS</span><div><b>Asha</b><p>Blocked on the chart library update.</p></div></div>
+                  <div class="ui-msg"><span class="ui-who">RK</span><div><b>Ravi</b><p>I can pin the old version for now.</p></div></div>
+                  <div class="ui-input"><span>Write a comment</span></div>
+                </div>
+              </div>
+            </div>
+            <figcaption>The assignee or an admin changes the status. Anyone in the workspace can comment.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="join" id="join" aria-labelledby="join-title">
+      <div class="container join__grid">
+        <div class="join__text">
+          <h2 id="join-title">Eight characters bring the group in</h2>
+          <p class="lead">A new workspace gets an invite code and a <code>#general</code> channel. Paste the code and you’re in.</p>
+        </div>
+        <figure class="join__shot" data-slot="join" data-kind="product" data-alt="The Join a Workspace dialog with a code pasted in, beside the sidebar after joining">
+          <div class="ui ui-join">
+            <div class="ui-join__step">
+              <span class="ui-side__h">Join a Workspace</span>
+              <p class="ui-join__hint">Enter an invite code to join your team.</p>
+              <div class="ui-code" aria-label="Sample invite code K7QM2XPA">
+                <span>K</span><span>7</span><span>Q</span><span>M</span><span>2</span><span>X</span><span>P</span><span>A</span>
+              </div>
+              <span class="ui-btn">Join Workspace</span>
+            </div>
+            <div class="ui-join__step ui-join__after">
+              <span class="ui-side__ws">Example Capstone</span>
+              <span class="ui-side__h">Channels</span>
+              <span class="ui-chan ui-chan--on">#general</span>
+              <span class="ui-side__h">Your role</span>
+              <span class="ui-chan">Member</span>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="run graphite" aria-labelledby="run-title">
+      <div class="container run__grid">
+        <div class="run__text">
+          <h2 id="run-title">Runs on your own laptop</h2>
+          <dl class="run__stack">
+            <div><dt>Backend</dt><dd>Spring Boot 4.1 on Java 21</dd></div>
+            <div><dt>Database</dt><dd>PostgreSQL 14 or newer</dd></div>
+            <div><dt>Frontend</dt><dd>React 19 with Vite</dd></div>
+            <div><dt>Live updates</dt><dd>STOMP over WebSockets</dd></div>
+          </dl>
+        </div>
+        <figure class="run__code">
+          <figcaption>Terminal, from the repo root</figcaption>
+<pre><code><span class="c"># the API, on :8080</span>
+cd backend
+./mvnw spring-boot:run
+
+<span class="c"># the app, on :5173</span>
+cd frontend
+npm install
+npm run dev</code></pre>
+        </figure>
+      </div>
+    </section>
+
+    <section class="roles" aria-labelledby="roles-title">
+      <div class="container roles__grid">
+        <h2 id="roles-title">Who can do what</h2>
+        <table class="roles__table">
+          <thead>
+            <tr><th scope="col">In a workspace</th><th scope="col">Owner</th><th scope="col">Admin</th><th scope="col">Member</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Chat and comment</th><td data-role="Owner">Yes</td><td data-role="Admin">Yes</td><td data-role="Member">Yes</td></tr>
+            <tr class="roles__mark"><th scope="row">Change a task’s status</th><td data-role="Owner">Yes</td><td data-role="Admin">Yes</td><td data-role="Member">When assigned</td></tr>
+            <tr><th scope="row">Create and edit tasks</th><td data-role="Owner">Yes</td><td data-role="Admin">Yes</td><td data-role="Member">No</td></tr>
+            <tr><th scope="row">Invite and remove people</th><td data-role="Owner">Yes</td><td data-role="Admin">Yes</td><td data-role="Member">No</td></tr>
+            <tr><th scope="row">Delete the workspace</th><td data-role="Owner">Yes</td><td data-role="Admin">No</td><td data-role="Member">No</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="close" aria-labelledby="close-title">
+      <div class="container close__grid">
+        <div class="close__text">
+          <h2 id="close-title">Back to the board</h2>
+          <p class="lead">The app remembers which workspace you had open.</p>
+          <a class="key key--primary" href="/login">Open TeamFlow</a>
+        </div>
+        <figure class="close__shot" data-slot="workspaces" data-kind="product" data-alt="The Your Workspaces page listing the workspaces you belong to">
+          <div class="ui ui-list">
+            <span class="ui-side__h">Your Workspaces</span>
+            <div class="ui-wsrow ui-wsrow--on"><b>Example Capstone</b><span>Owner</span></div>
+            <div class="ui-wsrow"><b>Database Systems lab</b><span>Member</span></div>
+            <div class="ui-wsrow"><b>Hackathon team</b><span>Admin</span></div>
+            <div class="ui-wsrow ui-wsrow--new"><span>Create a Workspace</span><span>Join a Workspace</span></div>
+          </div>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="container">
+      <p class="foot__mark" aria-hidden="true">TeamFlow</p>
+      <div class="foot__row">
+        <ul class="foot__links">
+          <li><a href="/login">Log in</a></li>
+          <li><a href="/register">Create an account</a></li>
+          <li><a href="https://github.com/tharun10x/Team-Flow">Source on GitHub</a></li>
+          <li><a href="https://github.com/tharun10x/Team-Flow#readme">README</a></li>
+        </ul>
+        <p class="foot__note">A personal tool by Tharun, 2026.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./landing.js" defer></script>
+  <script>window.hallmarkSlots = (m) => { for (const [k, v] of Object.entries(m)) { const s = document.querySelector(`[data-slot="${k}"]`); if (!s) continue; const im = new Image(); im.src = typeof v === 'string' ? v : v.src; im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || ''; s.querySelectorAll(':scope > img').forEach((o) => o.remove()); s.prepend(im); } };
+document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });</script>
+</body>
+</html>

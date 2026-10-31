@@ -1,0 +1,28 @@
+[
+ {
+  "shape": "Workbench",
+  "theme": "cobalt",
+  "axes": "light/grotesk-sans/cool",
+  "hero": "Stage",
+  "nav": "masthead",
+  "footer": "mast",
+  "imagery": "product sample in hero, chat, task, join, workspaces",
+  "photos": [],
+  "entry": "frontend/public/landing/index.html",
+  "fingerprint": "workbench-stage-masthead-mast-switcher-split-band-table-band",
+  "sections": [
+   "hero",
+   "switcher",
+   "split",
+   "band-graphite",
+   "table",
+   "band-close",
+   "footer"
+  ],
+  "signature": "the group task board with its one overdue task",
+  "waived": [],
+  "prompt": "TeamFlow landing page, student project groups, personal tool, no sign-up cards, grey",
+  "date": "2026-10-31",
+  "mode": "build"
+ }
+]

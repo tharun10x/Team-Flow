@@ -14,11 +14,13 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificationExecutor<Task> {
     List<Task> findByWorkspaceId(Long workspaceId);
     
-    @Query("SELECT t FROM Task t WHERE t.workspace.id = :workspaceId " +
-           "AND (:status IS NULL OR t.status = :status) " +
-           "AND (:priority IS NULL OR t.priority = :priority) " +
-           "AND (:assigneeId IS NULL OR t.assignee.id = :assigneeId) " +
-           "AND (:search IS NULL OR LOWER(t.title) LIKE LOWER(CONCAT('%', :search, '%')))")
+    @Query("SELECT t FROM Task t " +
+       "LEFT JOIN t.assignee a " +
+       "WHERE t.workspace.id = :workspaceId " +
+       "AND (:status IS NULL OR t.status = :status) " +
+       "AND (:priority IS NULL OR t.priority = :priority) " +
+       "AND (:assigneeId IS NULL OR a.id = :assigneeId) " +
+       "AND (:search IS NULL OR LOWER(t.title) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Task> findFilteredTasks(
         @Param("workspaceId") Long workspaceId,
         @Param("status") TaskStatus status,
