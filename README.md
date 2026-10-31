@@ -1,113 +1,108 @@
-# TeamFlow 🚀
+# TeamFlow
 
-> A modern, real-time team collaboration and workspace management platform designed for seamless team communication, workspace isolation, and productivity.
+TeamFlow is a team collaboration app. You create a workspace, invite people with a short code, chat with them in channels in real time, and keep track of who's working on what.
+
+The backend is built with Spring Boot 4 and PostgreSQL. The frontend is built with React 19, TypeScript and Tailwind CSS. They communicate over a JWT-secured REST API and STOMP WebSockets.
 
 [![Java 21](https://img.shields.io/badge/Java-21-orange.svg?style=flat&logo=openjdk)](https://openjdk.org/)
 [![Spring Boot 4](https://img.shields.io/badge/Spring%20Boot-4.1.0-brightgreen.svg?style=flat&logo=springboot)](https://spring.io/projects/spring-boot)
 [![React 19](https://img.shields.io/badge/React-19-blue.svg?style=flat&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue.svg?style=flat&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS 4](https://img.shields.io/badge/Tailwind_CSS-4.0-38bdf8.svg?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-5432-blue.svg?style=flat&logo=postgresql)](https://www.postgresql.org/)
-[![WebSocket / STOMP](https://img.shields.io/badge/WebSocket-STOMP-red.svg?style=flat&logo=socketdotio)](https://stomp.github.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-blue.svg?style=flat&logo=postgresql)](https://www.postgresql.org/)
 
----
+## Contents
 
-## 📌 Table of Contents
+- [What it does](#what-it-does)
+- [What's next](#whats-next)
+- [Tech stack](#tech-stack)
+- [Project structure](#project-structure)
+- [Running it locally](#running-it-locally)
+- [Configuration](#configuration)
+- [API reference](#api-reference)
+- [WebSocket reference](#websocket-reference)
 
-- [About the Project](#-about-the-project)
-- [Key Features](#-key-features)
-  - [Completed Till Now](#-completed-till-now)
-  - [In Progress & Upcoming](#-in-progress--upcoming)
-- [Architecture & Tech Stack](#-architecture--tech-stack)
-- [Project Structure](#-project-structure)
-- [API & WebSocket Specifications](#-api--websocket-specifications)
-  - [REST Endpoints](#rest-endpoints)
-  - [WebSocket Topics & Messages](#websocket-topics--messages)
-- [Getting Started](#-getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Backend Setup](#backend-setup)
-  - [Frontend Setup](#frontend-setup)
-- [Screenshots & UI Showcase](#-screenshots--ui-showcase)
+## What it does
 
----
+### Workspaces and roles
 
-## 📖 About the Project
+Each workspace is separate from the others and has its own members, channels and tasks. When you create one, it gets an 8-character invite code and a `#general` channel. To join a workspace, you enter its code. The input box handles paste and backspace properly, so you can drop the code straight in.
 
-**TeamFlow** is an all-in-one team collaboration hub inspired by Slack and modern workflow tools. It enables organizations to create isolated workspaces, manage member roles, organize topic-based channels, and communicate via real-time messaging with sub-second message delivery.
+There are three roles:
 
-The application is built on a full-stack architecture featuring **Spring Boot 4** and **PostgreSQL** on the backend, with a responsive **React 19**, **TypeScript**, and **Tailwind CSS** frontend communicating over REST and authenticated **STOMP WebSockets**.
+- **Owner**: the person who created the workspace. Only the owner can delete it.
+- **Admin**: can invite and remove members and change their roles.
+- **Member**: can chat, view tasks and leave the workspace.
 
----
+The `/workspaces` page lists every workspace you belong to. The app remembers which one you had open, so a page refresh doesn't bounce you back.
 
-## ✨ Key Features
+### Chat
 
-### ✅ Completed Till Now
+Every workspace can have as many channels as you want. Messages are delivered live over WebSockets and saved in PostgreSQL, so the history is still there when you come back. In a channel you can:
 
-#### 1. Authentication & Security
-- **JWT-Based Authentication**: Secure stateless authentication using JSON Web Tokens.
-- **Password Hashing**: BCrypt encryption for user credentials.
-- **Protected Routing**: Client-side route guards ensuring only authenticated users access workspaces and dashboards.
-- **WebSocket Auth Interceptor**: Custom `ChannelInterceptor` verifying JWT tokens directly on STOMP `CONNECT` frames.
-- **Global Error Handling**: Standardized error responses using `@ControllerAdvice` and unified `ApiResponse<T>` wrappers.
+- **Reply** to a specific message. Your reply shows a quoted preview of the original.
+- **Edit** your own messages. Edited messages are marked as edited.
+- **Delete** a message. Authors can delete their own messages, and admins and owners can delete anyone's. A deleted message stays in the conversation as "This message was deleted".
+- **React** with an emoji. Clicking the same reaction again removes it.
 
-#### 2. Workspace Management & Multi-Tenancy
-- **Workspace Creation**: Easily provision workspaces with auto-generated unique 8-character invite codes.
-- **Default Channel Initialization**: Every new workspace automatically generates a `#general` channel.
-- **Invite Code Joining**: Interactive 8-character OTP-style input UI with auto-focus advance, paste support, and backspace handling.
-- **Workspace Hub (`/workspaces`)**: Central launcher to browse joined workspaces, switch active context, or join/create workspaces.
-- **Context Persistence**: Synchronized workspace state across browser reloads using React Context and `localStorage`.
+Edits, deletes and reactions all reach everyone in the channel straight away, without a refresh.
 
-#### 3. Role-Based Access Control (RBAC)
-- **Three-Tier Role Hierarchy**: `OWNER`, `ADMIN`, and `MEMBER`.
-- **Role Assignment**: Workspace creators are automatically assigned `OWNER` privileges.
-- **Role Management**: Owners and admins can promote or demote member roles.
-- **Member Moderation**: Privileged users can remove members from the workspace.
-- **Self-Service Actions**: Members can voluntarily leave workspaces; owners have exclusive rights to permanently delete workspaces.
+### Tasks
 
-#### 4. Real-Time Channels & Messaging
-- **Channel Organization**: Create topic-specific discussion channels within workspaces (e.g., `#general`, `#development`).
-- **Live WebSocket Messaging**: Instant real-time messaging using `@stomp/stompjs` and Spring WebSocket Message Broker (`/topic/channel/{channelId}`).
-- **Persistent Message History**: Messages are stored in PostgreSQL with timestamping, sender metadata, and channel association.
-- **Chat Interface**: Clean chat area with auto-scrolling to the latest message, sender initials/avatars, connection status indicators, and channel headers.
+Tasks belong to a workspace. Each task has a title, description, assignee, priority (`LOW`, `MEDIUM`, `HIGH` or `CRITICAL`) and deadline. Its status is one of `TODO`, `IN_PROGRESS`, `BLOCKED` or `COMPLETED`.
 
-#### 5. User Profile & Preferences
-- **Profile Overview**: View registered name, email, and workspace roles.
-- **Profile Updates**: Custom avatar fallbacks, role labels, and account settings interface.
-- **Notification Settings UI**: Preference toggles for mentions, task assignments, and activity digests.
+The tasks page shows counts at the top: total, in progress, completed and overdue. You can filter tasks by status, priority or assignee (including "assigned to me") and search them by text. Filtering and pagination happen on the server. Opening a task shows its details and a comment thread.
 
----
+Who can do what:
 
-### 🚧 In Progress & Upcoming
+- Owners and admins create, edit and delete tasks.
+- The assignee, plus any admin or owner, can change a task's status.
+- Everyone in the workspace can view tasks and comment on them.
 
-- [ ] **Direct Messaging (DMs)**: Private 1-on-1 real-time conversations.
-- [ ] **Message Reactions**: Interactive emoji reactions on messages (backend schema already modeled).
-- [ ] **Tasks & Kanban Board**: Task tracking with statuses, assignees, and deadlines (`/tasks`).
-- [ ] **Team Directory**: Searchable list of all team members across the organization (`/team`).
-- [ ] **File Attachments**: Upload and share images and documents in channels.
-- [ ] **Push Notifications**: Browser notifications for incoming messages and mentions.
+### Accounts
 
----
+Accounts use email and password. Passwords are hashed with BCrypt, and sessions are stateless JWTs. The same token that authenticates REST requests is checked again when the WebSocket connects. On the settings page you can update your profile and see your role in each workspace.
 
-## 🛠️ Architecture & Tech Stack
+## What's next
 
-### High-Level Architecture
+- [ ] Team directory (the `/team` page is a placeholder for now)
+- [ ] Dashboard with real activity data
+- [ ] Direct messages
+- [ ] File and image attachments (the message types already exist in the schema)
+- [ ] Live task updates over WebSocket
+- [ ] Notifications for mentions and task assignments. The settings page has the toggles, but nothing is connected to them yet.
+
+## Tech stack
+
+| Area | What's used |
+| :--- | :--- |
+| Frontend | React 19, TypeScript 6, Vite 8 |
+| Styling | Tailwind CSS v4, Lucide icons, Sonner for toasts |
+| Routing and state | React Router v7, React Context, TanStack Query |
+| Real-time client | `@stomp/stompjs` with `sockjs-client` |
+| Backend | Spring Boot 4.1, Java 21 |
+| Security | Spring Security, JJWT 0.12.6, BCrypt |
+| Messaging | Spring WebSocket with the built-in STOMP broker |
+| Database | PostgreSQL, Spring Data JPA (Hibernate), Lombok |
+| API docs | springdoc-openapi (Swagger UI) |
+
+Here's how a request flows through the backend:
 
 ```mermaid
 graph TD
-    Client["React Frontend (Vite + TS)"]
-    
-    subgraph Spring Boot Backend
-        Security["Spring Security + JWT Filter"]
-        RestCtrl["REST Controllers (/api/*)"]
-        WSCtrl["WebSocket Message Broker (/ws)"]
-        Services["Business Logic Services"]
-        Repos["Spring Data JPA Repositories"]
-    end
-    
-    DB[(PostgreSQL Database)]
+    Client["React frontend"]
 
-    Client -->|HTTPS REST Requests| Security
-    Client <-->|WSS STOMP Messages| WSCtrl
+    subgraph Spring Boot
+        Security["Spring Security + JWT filter"]
+        RestCtrl["REST controllers (/api/*)"]
+        WSCtrl["STOMP broker (/ws)"]
+        Services["Services"]
+        Repos["JPA repositories"]
+    end
+
+    DB[(PostgreSQL)]
+
+    Client -->|REST + JWT| Security
+    Client <-->|STOMP over SockJS| WSCtrl
     Security --> RestCtrl
     RestCtrl --> Services
     WSCtrl --> Services
@@ -115,182 +110,186 @@ graph TD
     Repos --> DB
 ```
 
-### Technology Breakdown
-
-| Layer | Technologies |
-| :--- | :--- |
-| **Frontend Framework** | React 19, TypeScript, Vite |
-| **Styling & UI** | Tailwind CSS v4, Lucide React, Sonner (Toasts) |
-| **Client Routing & State** | React Router DOM v7, React Context API, TanStack React Query |
-| **Real-time Client** | `@stomp/stompjs`, `sockjs-client` |
-| **Backend Framework** | Spring Boot 4.1.0, Java 21 |
-| **Security & Auth** | Spring Security 6, JJWT (`io.jsonwebtoken 0.12.6`), BCrypt |
-| **Messaging & Sockets** | Spring WebSocket, STOMP Protocol, In-Memory Message Broker |
-| **Database & Persistence** | PostgreSQL, Spring Data JPA, Hibernate, Lombok |
-| **Build Tools** | Maven (Backend), npm (Frontend) |
-
----
-
-## 📂 Project Structure
+## Project structure
 
 ```text
 Team-Flow/
 ├── backend/
-│   ├── src/main/java/com/teamflow/backend/
-│   │   ├── Config/              # WebSocket & Web CORS configurations
-│   │   ├── Controller/          # REST & WebSocket Controllers (Auth, Workspace, Chat, User)
-│   │   ├── Entity/              # JPA Entities (User, Workspace, WorkspaceMember, Channel, Message)
-│   │   │   └── Enum/            # Enums (Role: OWNER, ADMIN, MEMBER)
-│   │   ├── Repository/          # Spring Data JPA Repositories
-│   │   ├── Security/            # JWT Token Provider, Filters, UserDetailsService, SecurityConfig
-│   │   ├── Service/             # Core business logic (Auth, Workspace, Channel, Message, User)
-│   │   ├── dto/                 # Request & Response Data Transfer Objects
-│   │   └── Exception/           # Centralized exception handlers
-│   ├── src/main/resources/
-│   │   └── application.properties # Server port, database connection, JWT secret
-│   └── pom.xml                  # Maven dependencies
+│   └── src/main/java/com/teamflow/backend/
+│       ├── Config/        WebSocket, CORS and OpenAPI setup
+│       ├── Controller/    REST and STOMP endpoints
+│       ├── Entity/        JPA entities and enums
+│       ├── Repository/    Spring Data repositories
+│       ├── Security/      JWT handling and Spring Security config
+│       ├── Service/       Business logic and permission checks
+│       ├── dto/           Request and response objects
+│       └── Exception/     Custom exceptions and the global handler
 │
-├── frontend/
-│   ├── src/
-│   │   ├── api/                 # Axios client with interceptors
-│   │   ├── components/          # Reusable UI (Sidebar, Modals, MessageLayout, ProtectedRoute)
-│   │   ├── context/             # AuthContext, WorkspaceContext, ChannelContext
-│   │   ├── pages/               # Views (Login, Register, Workspaces, Dashboard, ChatArea, Settings)
-│   │   ├── App.tsx              # Application routing & layout tree
-│   │   └── main.tsx             # Entry point
-│   ├── package.json             # NPM dependencies & scripts
-│   ├── tailwind.config.js       # Styling configuration
-│   └── vite.config.ts           # Vite build configuration
-└── README.md
+└── frontend/
+    └── src/
+        ├── api/           Axios instance and API helpers
+        ├── components/    Layouts, sidebars, modals, task components
+        ├── context/       Auth, workspace and channel state
+        ├── hooks/         useStompClient
+        ├── pages/         One file per route
+        └── types/         Shared TypeScript types
 ```
 
----
+## Running it locally
 
-## 📡 API & WebSocket Specifications
+You'll need JDK 21, Node.js 20 or newer, and PostgreSQL 14 or newer. You don't need to install Maven, because the repo includes the Maven Wrapper.
 
-### REST Endpoints
+**1. Create the database.**
 
-#### Authentication (`/api/auth`)
-| Method | Endpoint | Description | Access |
+```sql
+CREATE DATABASE teamflow;
+```
+
+You don't have to create any tables. Hibernate creates them on first run.
+
+**2. Start the backend.**
+
+First, put your database credentials and a JWT secret in `backend/src/main/resources/application.properties` (see [Configuration](#configuration)). Then run:
+
+```bash
+cd backend
+./mvnw spring-boot:run        # on Windows: mvnw.cmd spring-boot:run
+```
+
+The API runs at `http://localhost:8080`, and the Swagger docs are at `http://localhost:8080/swagger-ui.html`.
+
+**3. Start the frontend.**
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173`. Both servers bind to `0.0.0.0`, so other devices on your network can open the app too, which helps when testing on a phone.
+
+Other useful commands:
+
+| Command | Run in | What it does |
+| :--- | :--- | :--- |
+| `npm run build` | `frontend/` | Type-checks and builds for production |
+| `npm run lint` | `frontend/` | Runs ESLint |
+| `./mvnw test` | `backend/` | Runs the backend tests |
+| `./mvnw clean package` | `backend/` | Builds the backend JAR |
+
+## Configuration
+
+### Backend (`application.properties`)
+
+| Property | What it's for |
+| :--- | :--- |
+| `spring.datasource.url` | The database URL, e.g. `jdbc:postgresql://localhost:5432/teamflow` |
+| `spring.datasource.username` / `password` | Your PostgreSQL login |
+| `spring.jpa.hibernate.ddl-auto` | How Hibernate manages the schema. It's set to `update`. |
+| `jwt.secret` | A Base64-encoded key of at least 512 bits |
+| `jwt.exp` | How long a token lasts, in milliseconds. The default of `864000000` is 10 days. |
+| `server.address` | The address the server binds to. It's set to `0.0.0.0`. |
+
+To generate a secret, run:
+
+```bash
+openssl rand -base64 64
+```
+
+Keep real passwords and secrets out of git. Outside local development, set them through environment variables such as `SPRING_DATASOURCE_PASSWORD` and `JWT_SECRET`. Spring picks those up automatically.
+
+### Frontend (`frontend/.env`)
+
+| Variable | What it's for |
+| :--- | :--- |
+| `VITE_API_URL` | The base URL of the API. If it isn't set, the app uses `http://<current-host>:8080/api`. |
+
+## API reference
+
+Every response comes wrapped in the same `ApiResponse<T>` shape. Every endpoint outside `/api/auth` needs an `Authorization: Bearer <token>` header. The Swagger UI has the full request and response schemas. The tables below are a quick reference.
+
+### Auth
+
+| Method | Endpoint | Description | Who |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Register a new user account | Public |
-| `POST` | `/api/auth/login` | Authenticate and obtain JWT token | Public |
+| `POST` | `/api/auth/register` | Create an account | Anyone |
+| `POST` | `/api/auth/login` | Log in and get a token | Anyone |
 
-#### Workspaces (`/api/workspaces`)
-| Method | Endpoint | Description | Access |
+### Users
+
+| Method | Endpoint | Description | Who |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/workspaces` | Get all workspaces for current user | Authenticated |
-| `POST` | `/api/workspaces` | Create a new workspace (auto-creates `#general`) | Authenticated |
-| `GET` | `/api/workspaces/{id}` | Get workspace details and member list | Members |
-| `POST` | `/api/workspaces/join` | Join workspace using 8-character code | Authenticated |
-| `POST` | `/api/workspaces/{id}/members` | Invite a member by email | Admin/Owner |
-| `DELETE` | `/api/workspaces/{id}/members/{userId}` | Remove a member from workspace | Admin/Owner |
-| `PUT` | `/api/workspaces/{id}/members/{userId}/role` | Update a member's role (`ADMIN`, `MEMBER`) | Admin/Owner |
-| `POST` | `/api/workspaces/{id}/leave` | Leave a workspace | Member/Admin |
-| `DELETE` | `/api/workspaces/{id}` | Delete workspace permanently | Owner |
-| `GET` | `/api/workspaces/{id}/channels` | List all channels in workspace | Members |
-| `POST` | `/api/workspaces/{id}/channels` | Create a new channel in workspace | Members |
+| `GET` | `/api/users/me` | Get your profile | Logged in |
+| `PUT` | `/api/users/me` | Update your profile | Logged in |
 
-#### Messages (`/api/channels`)
-| Method | Endpoint | Description | Access |
+### Workspaces
+
+| Method | Endpoint | Description | Who |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/channels/{channelId}/messages` | Retrieve message history for channel | Workspace Member |
+| `GET` | `/api/workspaces` | List your workspaces | Logged in |
+| `POST` | `/api/workspaces` | Create a workspace | Logged in |
+| `GET` | `/api/workspaces/{id}` | Get workspace details and members | Member |
+| `POST` | `/api/workspaces/join` | Join with an invite code | Logged in |
+| `POST` | `/api/workspaces/{id}/members` | Invite someone by email | Admin, Owner |
+| `DELETE` | `/api/workspaces/{id}/members/{userId}` | Remove a member | Admin, Owner |
+| `PUT` | `/api/workspaces/{id}/members/{userId}/role` | Change someone's role | Admin, Owner |
+| `POST` | `/api/workspaces/{id}/leave` | Leave a workspace | Member, Admin |
+| `DELETE` | `/api/workspaces/{id}` | Delete a workspace | Owner |
 
-#### User Profile (`/api/users`)
-| Method | Endpoint | Description | Access |
+### Channels and messages
+
+| Method | Endpoint | Description | Who |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/users/me` | Fetch authenticated user profile | Authenticated |
-| `PUT` | `/api/users/me` | Update authenticated user details | Authenticated |
+| `GET` | `/api/workspaces/{workspaceId}/channels` | List channels | Member |
+| `POST` | `/api/workspaces/{workspaceId}/channels` | Create a channel | Member |
+| `GET` | `/api/channels/{channelId}/messages` | Get message history | Member |
+| `PUT` | `/api/messages/{id}` | Edit a message | Author |
+| `DELETE` | `/api/messages/{id}` | Delete a message | Author, Admin, Owner |
+| `POST` | `/api/messages/{id}/reactions` | Add or remove a reaction, e.g. `{ "emoji": "👍" }` | Member |
 
----
+### Tasks
 
-### WebSocket Topics & Messages
+| Method | Endpoint | Description | Who |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/workspaces/{workspaceId}/tasks` | Create a task | Admin, Owner |
+| `GET` | `/api/workspaces/{workspaceId}/tasks` | List tasks | Member |
+| `GET` | `/api/tasks/{id}` | Get one task | Member |
+| `PUT` | `/api/tasks/{id}` | Update a task | Admin, Owner |
+| `PATCH` | `/api/tasks/{id}/status` | Change the status | Assignee, Admin, Owner |
+| `DELETE` | `/api/tasks/{id}` | Delete a task | Admin, Owner |
+| `POST` | `/api/tasks/{id}/comments` | Add a comment | Member |
+| `GET` | `/api/tasks/{id}/comments` | List comments | Member |
 
-- **Handshake Endpoint**: `/ws` (with SockJS fallback)
-- **Authentication**: Sent in STOMP headers: `Authorization: Bearer <JWT_TOKEN>`
-- **Publish Message**:
-  - Destination: `/app/chat.sendMessage`
-  - Payload:
-    ```json
-    {
-      "channelId": 1,
-      "content": "Hello team!"
-    }
-    ```
-- **Subscribe Topic**:
-  - Destination: `/topic/channel/{channelId}`
-  - Receives `MessageResponse` payload containing message ID, content, sender info, timestamp, and channel ID.
+The task list accepts these query parameters:
 
----
+- Filters: `status`, `priority`, `assigneeId` and `search`.
+- Paging: `page` and `size` (20 by default).
+- Sorting: `sort` (newest first by default).
 
-## 🚀 Getting Started
+Here's an example request body for creating a task:
 
-### Prerequisites
+```json
+{
+  "title": "Set up CI pipeline",
+  "description": "GitHub Actions for backend and frontend",
+  "assigneeId": 3,
+  "priority": "HIGH",
+  "deadline": "2026-11-15T17:00:00"
+}
+```
 
-Make sure you have the following installed on your machine:
-- **Java Development Kit (JDK) 21+**
-- **Apache Maven 3.8+**
-- **Node.js 18+** and **npm**
-- **PostgreSQL 14+**
+## WebSocket reference
 
----
+Connect to `/ws` using SockJS, and pass your token in the STOMP `CONNECT` headers as `Authorization: Bearer <token>`.
 
-### Backend Setup
+To send a message, publish to `/app/chat.sendMessage`. The `replyToId` field is optional:
 
-1. **Configure PostgreSQL Database**:
-   Create a database named `teamflow`:
-   ```sql
-   CREATE DATABASE teamflow;
-   ```
+```json
+{
+  "channelId": 1,
+  "content": "Hello team!",
+  "replyToId": 42
+}
+```
 
-2. **Configure Database Credentials**:
-   Edit `backend/src/main/resources/application.properties` with your database credentials:
-   ```properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/teamflow
-   spring.datasource.username=your_postgres_username
-   spring.datasource.password=your_postgres_password
-   
-   jwt.secret=your_base64_encoded_jwt_secret_key_here
-   jwt.exp=864000000
-   ```
-
-3. **Build and Run the Backend**:
-   ```bash
-   cd backend
-   ./mvnw clean spring-boot:run
-   ```
-   The backend server will start at `http://localhost:8080`.
-
----
-
-### Frontend Setup
-
-1. **Navigate to the frontend folder**:
-   ```bash
-   cd frontend
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server**:
-   ```bash
-   npm run dev
-   ```
-   The frontend application will be live at `http://localhost:5173`.
-
----
-
-## 🎨 Screenshots & UI Showcase
-
-| Workspace Hub | Real-Time Chat |
-| :---: | :---: |
-| *Browse and switch between workspaces with custom invite codes* | *Instant real-time communication across topic channels* |
-
-| Workspace Settings | Role Management |
-| :---: | :---: |
-| *Manage workspace members, transfer ownership, or configure general details* | *Granular permissions for Owners, Admins, and Members* |
-
----
+To receive messages, subscribe to `/topic/channel/{channelId}`. You'll get a `MessageResponse` every time a message in that channel is sent, edited, deleted or reacted to. The frontend matches each update to an existing message by its ID.
