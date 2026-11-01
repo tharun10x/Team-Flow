@@ -95,21 +95,22 @@ export function CreateTaskModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="modal-back">
       {/* Modal Box */}
       <div
-        className="bg-white rounded-3xl shadow-xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200"
+        className="modal max-w-lg!"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-rule">
+          <h2 className="section-title">
             {initialTask ? "Edit Task" : "Create New Task"}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 rounded-full transition-colors"
+            className="btn btn-ghost btn-icon"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
@@ -120,15 +121,15 @@ export function CreateTaskModal({
           <div className="space-y-4">
             {/* Title Input */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Title <span className="text-red-500">*</span>
+              <label className="label">
+                Title <span className="text-error">*</span>
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Design landing page"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all text-sm"
+                className="field field-lg"
                 required
                 autoFocus
               />
@@ -136,16 +137,16 @@ export function CreateTaskModal({
 
             {/* Description Textarea */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+              <label className="label">
                 Description{" "}
-                <span className="text-gray-400 font-normal">(Optional)</span>
+                <span className="text-muted font-normal">(Optional)</span>
               </label>
               <textarea
                 value={description}
                 rows={3}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="What needs to be done?"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all text-sm resize-none"
+                className="field field-lg resize-none"
               />
             </div>
 
@@ -153,13 +154,13 @@ export function CreateTaskModal({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Assignee Select */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                <label className="label">
                   Assignee
                 </label>
                 <select
                   value={assigneeId}
                   onChange={(e) => setAssigneeId(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all text-sm bg-white"
+                  className="field field-lg"
                 >
                   <option value="">Unassigned</option>
                   {members.map((m) => (
@@ -172,7 +173,7 @@ export function CreateTaskModal({
 
               {/* Priority Select */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                <label className="label">
                   Priority
                 </label>
                 <select
@@ -180,7 +181,7 @@ export function CreateTaskModal({
                   onChange={(e) =>
                     setPriority(e.target.value as TaskPriority)
                   }
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all text-sm bg-white"
+                  className="field field-lg"
                 >
                   <option value="LOW">Low</option>
                   <option value="MEDIUM">Medium</option>
@@ -192,32 +193,32 @@ export function CreateTaskModal({
 
             {/* Deadline Input */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+              <label className="label">
                 Deadline{" "}
-                <span className="text-gray-400 font-normal">(Optional)</span>
+                <span className="text-muted font-normal">(Optional)</span>
               </label>
               <input
                 type="datetime-local"
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all text-sm text-gray-700 bg-white"
+                className="field field-lg"
               />
             </div>
           </div>
 
           {/* Footer Actions */}
-          <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+          <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-rule">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-xl transition-colors"
+              className="btn btn-ghost btn-lg"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex items-center justify-center min-w-30 px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-sm"
+              className="btn btn-lg min-w-32"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

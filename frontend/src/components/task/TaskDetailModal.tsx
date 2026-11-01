@@ -150,14 +150,14 @@ export function TaskDetailModal({
     if (!isOpen || !currentTask) return null;
     
     return(
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="modal-back">
             {/* The Card Container */}
-            <div className="bg-white rounded-3xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden" onClick={(e)=> e.stopPropagation()}>
+            <div className="modal max-w-2xl!" onClick={(e)=> e.stopPropagation()}>
                 {/* <PriorityBadge></PriorityBadge> */}
                         {/* ========================================================
                                 ZONE 1: HEADER BAR (Sticky / Top)
                             ======================================================== */}
-                <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
+                <div className="px-6 py-4 border-b border-rule flex items-center justify-between gap-4">
                 
                     {/* LEFT: Priority Badge, Overdue Badge, and Status Selector */}
                     <div className="flex items-center gap-2 flex-wrap">
@@ -172,12 +172,9 @@ export function TaskDetailModal({
                         <select
                             value={currentTask.status}
                             onChange={handleStatusChange}
-                            className={`text-xs font-semibold px-2.5 py-1 rounded-full border outline-none cursor-pointer transition-colors ${
-                            STATUS_CONFIG[currentTask.status]?.bg || "bg-gray-100"
-                            } ${
-                            STATUS_CONFIG[currentTask.status]?.text || "text-gray-700"
-                            } ${
-                            STATUS_CONFIG[currentTask.status]?.border || "border-gray-200"
+                            aria-label="Status"
+                            className={`field min-h-8! w-36! font-medium ${
+                            STATUS_CONFIG[currentTask.status]?.text || "text-ink-2"
                             }`}
                         >
                             <option value="TODO">To Do</option>
@@ -198,7 +195,7 @@ export function TaskDetailModal({
                             <button
                             type="button"
                             onClick={() => onEditTask(currentTask)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                            className="btn btn-ghost"
                             >
                             <Pencil className="w-3.5 h-3.5" />
                             Edit
@@ -209,11 +206,12 @@ export function TaskDetailModal({
                             type="button"
                             disabled={isDeleting}
                             onClick={handleDelete}
-                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors disabled:opacity-50"
+                            className="btn btn-ghost btn-icon text-error! hover:bg-error-wash!"
                             title="Delete Task"
+                            aria-label="Delete Task"
                             >
                             {isDeleting ? (
-                                <Loader2 className="w-4 h-4 animate-spin text-red-500" />
+                                <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
                                 <Trash2 className="w-4 h-4" />
                             )}
@@ -225,7 +223,8 @@ export function TaskDetailModal({
                         <button
                         type="button"
                         onClick={onClose}
-                        className="p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-full transition-colors ml-1"
+                        className="btn btn-ghost btn-icon"
+                        aria-label="Close"
                         >
                         <X className="w-5 h-5" />
                         </button>
@@ -235,24 +234,24 @@ export function TaskDetailModal({
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     {/* 2A. Task Title & Description */}
                     <div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2.5 break-words">
+                        <h1 className="mb-3 max-w-none break-words font-display text-2xl font-semibold tracking-display text-ink">
                             {currentTask.title}
                         </h1>
-                        <div className="bg-gray-50/60 p-4 rounded-2xl border border-gray-100">
-                            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap break-words">
+                        <div>
+                            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-ink-2">
                                 {currentTask.description || (
-                                    <span className="italic text-gray-400">No description provided.</span>
+                                    <span className="italic text-muted">No description provided.</span>
                                 )}
                             </p>
                         </div>
                     </div>
 
                     {/* 2B. Metadata Grid: Assignee, Deadline, Created By */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 border-y border-rule sm:grid-cols-3 sm:divide-x sm:divide-rule">
                         {/* Assignee Card */}
-                        <div className="bg-gray-50 p-3.5 rounded-2xl border border-gray-100 flex flex-col gap-1.5">
-                            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                                <User className="w-3.5 h-3.5 text-gray-400" /> Assignee
+                        <div className="flex flex-col gap-1 py-3 sm:px-4 sm:first:pl-0">
+                            <span className="flex items-center gap-1.5 text-xs text-muted">
+                                <User className="w-3.5 h-3.5 text-muted" /> Assignee
                             </span>
                             <div className="flex items-center gap-2 mt-0.5">
                                 {currentTask.assignee ? (
@@ -261,33 +260,33 @@ export function TaskDetailModal({
                                             <img
                                                 src={currentTask.assignee.avatarUrl}
                                                 alt={currentTask.assignee.name}
-                                                className="w-6 h-6 rounded-full object-cover shrink-0"
+                                                className="h-6 w-6 shrink-0 rounded-pill object-cover"
                                             />
                                         ) : (
-                                            <div className="w-6 h-6 rounded-full bg-linear-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                                            <div className="avatar h-6! w-6!">
                                                 {currentTask.assignee.name.charAt(0).toUpperCase()}
                                             </div>
                                         )}
-                                        <span className="text-xs font-semibold text-gray-800 truncate">
+                                        <span className="truncate text-sm font-medium text-ink">
                                             {currentTask.assignee.name}
                                         </span>
                                     </>
                                 ) : (
-                                    <span className="text-xs text-gray-400 italic">Unassigned</span>
+                                    <span className="text-sm text-muted">Unassigned</span>
                                 )}
                             </div>
                         </div>
 
                         {/* Deadline Card */}
-                        <div className="bg-gray-50 p-3.5 rounded-2xl border border-gray-100 flex flex-col gap-1.5">
-                            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                                <Calendar className="w-3.5 h-3.5 text-gray-400" /> Deadline
+                        <div className="flex flex-col gap-1 py-3 sm:px-4 sm:first:pl-0">
+                            <span className="flex items-center gap-1.5 text-xs text-muted">
+                                <Calendar className="w-3.5 h-3.5 text-muted" /> Deadline
                             </span>
                             <span
-                                className={`text-xs font-semibold mt-0.5 ${
+                                className={`text-sm font-medium tabular-nums ${
                                     isOverdue && currentTask.status !== "COMPLETED"
-                                        ? "text-red-600 font-bold"
-                                        : "text-gray-800"
+                                        ? "text-error font-semibold"
+                                        : "text-ink"
                                 }`}
                             >
                                 {formatDeadline(currentTask.deadline)}
@@ -295,11 +294,11 @@ export function TaskDetailModal({
                         </div>
 
                         {/* Created By Card */}
-                        <div className="bg-gray-50 p-3.5 rounded-2xl border border-gray-100 flex flex-col gap-1.5">
-                            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                        <div className="flex flex-col gap-1 py-3 sm:px-4 sm:first:pl-0">
+                            <span className="text-xs text-muted">
                                 Created By
                             </span>
-                            <span className="text-xs font-semibold text-gray-800 truncate mt-0.5">
+                            <span className="truncate text-sm font-medium text-ink">
                                 {currentTask.createdBy?.name || "Unknown"}
                             </span>
                         </div>
@@ -308,18 +307,18 @@ export function TaskDetailModal({
                     {/* 2C. Comments Thread */}
                     <div className="space-y-4">
                         {/* Thread Header */}
-                        <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
-                        <MessageSquare className="w-4 h-4 text-indigo-600" />
-                        <h3 className="font-bold text-sm text-gray-900">Comments ({comments.length})</h3>
+                        <div className="flex items-center gap-2 border-b border-rule pb-2">
+                        <MessageSquare className="w-4 h-4 text-muted" />
+                        <h3 className="font-display text-md font-semibold tracking-display text-ink">Comments ({comments.length})</h3>
                         </div>
                         {/* Comment Items */}
                         {isLoadingComments ? (
-                            <div className="flex items-center justify-center py-6 text-gray-400 gap-2 text-xs">
-                                <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
-                                <span>Loading comments...</span>
+                            <div className="flex items-center gap-2 py-4 text-sm text-muted" role="status">
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <span>Loading comments…</span>
                             </div>
                         ) : comments.length === 0 ? (
-                            <div className="py-6 text-center text-xs text-gray-400 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                            <div className="py-4 text-sm text-muted">
                                 No comments yet. Start the discussion below!
                             </div>
                         ) : (
@@ -331,10 +330,10 @@ export function TaskDetailModal({
                                             <img
                                                 src={comment.user.avatarUrl}
                                                 alt={comment.user.name}
-                                                className="w-7 h-7 rounded-full object-cover shrink-0 mt-0.5"
+                                                className="mt-0.5 h-7 w-7 shrink-0 rounded-pill object-cover"
                                             />
                                         ) : (
-                                            <div className="w-7 h-7 rounded-full bg-linear-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                                            <div className="avatar mt-0.5">
                                                 {comment.user.name
                                                     ? comment.user.name.charAt(0).toUpperCase()
                                                     : "U"}
@@ -342,12 +341,12 @@ export function TaskDetailModal({
                                         )}
 
                                         {/* Comment Bubble */}
-                                        <div className="flex-1 bg-gray-50 rounded-2xl p-3 border border-gray-100">
+                                        <div className="min-w-0 flex-1">
                                             <div className="flex items-center justify-between mb-1">
-                                                <span className="font-semibold text-xs text-gray-900">
+                                                <span className="text-sm font-medium text-ink">
                                                     {comment.user.name}
                                                 </span>
-                                                <span className="text-[10px] text-gray-400">
+                                                <span className="text-xs text-muted">
                                                     {new Date(comment.createdAt).toLocaleDateString([], {
                                                         month: "short",
                                                         day: "numeric",
@@ -359,7 +358,7 @@ export function TaskDetailModal({
                                                     })}
                                                 </span>
                                             </div>
-                                            <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
+                                            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-ink-2">
                                                 {comment.content}
                                             </p>
                                         </div>
@@ -370,18 +369,19 @@ export function TaskDetailModal({
                     </div>
                 </div>
                 
-                <form onSubmit={handleAddComment} className="p-4 border-t border-gray-100 bg-white flex items-center gap-2">
+                <form onSubmit={handleAddComment} className="flex items-center gap-2 border-t border-rule p-4">
                     <input 
                         type="text" 
                         value={newCommentText} 
                         onChange={(e) => setNewCommentText(e.target.value)} 
                         placeholder="Write a comment..." 
-                        className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                        aria-label="Write a comment"
+                        className="field field-lg flex-1"
                     />
                     <button
                         type="submit"
                         disabled={isSubmittingComment || !newCommentText.trim()}
-                        className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold flex items-center gap-1.5 disabled:opacity-50 transition-colors">
+                        className="btn btn-lg">
                         {isSubmittingComment ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4" /> Send</>}
                     </button>
                 </form>

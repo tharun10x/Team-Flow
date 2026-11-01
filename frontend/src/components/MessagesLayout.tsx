@@ -3,9 +3,9 @@ import { MessagesSidebar } from "./MessagesSidebar";
 
 export function MessageLayout(){
     return(
-        <div className="flex h-screen bg-white">
+        <div className="flex h-full min-w-0 overflow-hidden bg-paper">
             <MessagesSidebar />
-            <main className="flex-1 flex flex-col h-full">
+            <main className="flex h-full min-w-0 flex-1 flex-col">
                 <Outlet />  
             </main>
         </div>

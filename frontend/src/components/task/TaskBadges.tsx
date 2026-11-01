@@ -7,31 +7,31 @@ TaskStatus,
 > = {
     TODO: {
     label: "To Do",
-    bg: "bg-gray-100",
-    text: "text-gray-700",
-    dot: "bg-gray-400",
-    border: "border-gray-200",
+    bg: "bg-paper-3",
+    text: "text-muted",
+    dot: "bg-paper-2",
+    border: "border-rule",
   },
     IN_PROGRESS: {
         label: "In Progress",
-        bg: "bg-blue-50",
-        text: "text-blue-700",
-        dot: "bg-blue-500",
-        border: "border-blue-200",
+        bg: "bg-accent-wash",
+        text: "text-accent",
+        dot: "bg-primary",
+        border: "border-rule-2",
     },
     BLOCKED: {
         label: "Blocked",
-        bg: "bg-red-50",
-        text: "text-red-700",
-        dot: "bg-red-500",
-        border: "border-red-200",
+        bg: "bg-error-wash",
+        text: "text-error",
+        dot: "bg-error",
+        border: "border-rule",
     },
     COMPLETED: {
         label: "Completed",
-        bg: "bg-emerald-50",
-        text: "text-emerald-700",
-        dot: "bg-emerald-500",
-        border: "border-emerald-200",
+        bg: "bg-success-wash",
+        text: "text-success",
+        dot: "bg-success",
+        border: "border-rule",
     },
 }
 
@@ -41,27 +41,27 @@ TaskPriority,
 > = {
     LOW: {
     label: "Low",
-    bg: "bg-slate-100",
-    text: "text-slate-600",
-    border: "border-slate-200",
+    bg: "bg-paper-3",
+    text: "text-muted",
+    border: "border-rule",
     },
     MEDIUM: {
         label: "Medium",
-        bg: "bg-indigo-50",
-        text: "text-indigo-600",
-        border: "border-indigo-200",
+        bg: "bg-paper-3",
+        text: "text-ink-2",
+        border: "border-rule-2",
     },
     HIGH: {
         label: "High",
-        bg: "bg-amber-50",
-        text: "text-amber-700",
-        border: "border-amber-200",
+        bg: "bg-warn-wash",
+        text: "text-warn",
+        border: "border-rule",
     },
     CRITICAL: {
         label: "Critical",
-        bg: "bg-rose-50",
-        text: "text-rose-700",
-        border: "border-rose-200",
+        bg: "bg-error-wash",
+        text: "text-error",
+        border: "border-rule",
     },
 }
 
@@ -71,9 +71,9 @@ export function PriorityBadge({ priority }: { priority: TaskPriority }){
 
     return (
     <span
-      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-semibold border ${config.bg} ${config.text} ${config.border}`}
+      className={`inline-flex items-center gap-1 whitespace-nowrap text-sm ${config.text} ${priority === "LOW" ? "" : "font-medium"}`}
     >
-      <Icon className="w-3 h-3" />
+      <Icon className="h-3.5 w-3.5 shrink-0" />
       {config.label}
     </span>
   );
@@ -83,9 +83,8 @@ export function StatusBadge({ status }: { status: TaskStatus }){
     const config = STATUS_CONFIG[status] || STATUS_CONFIG.TODO;
     return (
         <span
-        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${config.bg} ${config.text} ${config.border}`}
+        className={`inline-flex items-center whitespace-nowrap text-sm font-medium ${config.text}`}
         >
-        <span className={`w-1.5 h-1.5 rounded-full ${config.dot}`} />
         {config.label}
         </span>
     );
@@ -93,8 +92,8 @@ export function StatusBadge({ status }: { status: TaskStatus }){
 
 export function OverdueBadge() {
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold bg-red-100 text-red-700 border border-red-200 animate-pulse">
-      <AlertCircle className="w-3 h-3" />
+    <span className="inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-error">
+      <AlertCircle className="h-3.5 w-3.5 shrink-0" />
       Overdue
     </span>
   );

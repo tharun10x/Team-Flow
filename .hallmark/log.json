@@ -1,5 +1,31 @@
 [
  {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "app",
+  "shape": "app screen",
+  "theme": "cobalt",
+  "axes": "light/grotesk-sans/cool",
+  "hero": "none",
+  "nav": "kept sidebar shell, icon rail under 48rem",
+  "footer": "none",
+  "imagery": "none",
+  "photos": [],
+  "entry": "frontend/src/index.css",
+  "fingerprint": "app-ledger-tables-bands",
+  "sections": [
+   "workspaces table",
+   "task ledger",
+   "chat thread",
+   "settings bands",
+   "auth on graphite"
+  ],
+  "signature": "the task ledger with status set inline",
+  "waived": [],
+  "prompt": "redesign src/pages/* keeping the landing page colour theme",
+  "date": "2026-10-31"
+ },
+ {
   "shape": "Workbench",
   "theme": "cobalt",
   "axes": "light/grotesk-sans/cool",

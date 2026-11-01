@@ -19,38 +19,42 @@ export function MessagesSidebar() {
   const directMessages = channels.filter((c) => c.isDirectMessage);
 
   return (
-    <aside className="w-64 h-full bg-white border-r border-gray-200 flex flex-col shrink-0 select-none">
-      
+    <aside className="flex h-full w-44 shrink-0 select-none flex-col border-r border-rule bg-paper-2 md:w-60">
+
       {/* 1. Header */}
-      <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-        <h2 className="font-bold text-lg text-gray-900">Messages</h2>
+      <div className="flex h-14 items-center justify-between border-b border-rule px-4">
+        <h2 className="section-title">Messages</h2>
         {/* Quick Add icon */}
-        
+
       </div>
 
       {/* 2. Scrollable Channels List */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
-        
+      <div className="flex-1 space-y-6 overflow-y-auto px-3 py-4">
+
         {/* --- CHANNELS SECTION --- */}
         <div>
-          <div className="flex items-center justify-between px-2 mb-2">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <div className="mb-1 flex items-center justify-between pl-3">
+            <span className="text-xs text-muted">
               Channels
             </span>
-            <button 
+            <button
+          type="button"
           onClick={() => setIsModalOpen(true)}
-          className="p-1 rounded-md text-gray-400 hover:text-indigo-600 hover:bg-gray-100 transition-colors"
+          className="btn btn-ghost btn-icon min-h-7! w-7!"
           title="Create channel"
+          aria-label="Create channel"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="h-4 w-4" />
         </button>
           </div>
 
           <div className="space-y-0.5">
             {isLoading ? (
-              <p className="text-xs text-gray-400 px-2 py-1">Loading channels...</p>
+              <div className="space-y-2 px-3 py-1" role="status" aria-label="Loading channels...">
+                <div className="skeleton h-4 w-3/4" /><div className="skeleton h-4 w-1/2" /><div className="skeleton h-4 w-2/3" />
+              </div>
             ) : regularChannels.length === 0 ? (
-              <p className="text-xs text-gray-400 px-2 py-1">No channels yet.</p>
+              <p className="px-3 py-1 text-sm text-muted">No channels yet.</p>
             ) : (
               regularChannels.map((channel) => {
                 // Check if this channel is the active one in the URL
@@ -58,15 +62,13 @@ export function MessagesSidebar() {
 
                 return (
                   <button
+                    type="button"
                     key={channel.id}
                     onClick={() => navigate(`/messages/${channel.id}`)}
-                    className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors text-left ${
-                      isActive
-                        ? "bg-indigo-50 text-indigo-600 font-semibold"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                    }`}
+                    aria-current={isActive ? "page" : undefined}
+                    className="row-btn gap-2!"
                   >
-                    <Hash className={`w-4 h-4 ${isActive ? "text-indigo-600" : "text-gray-400"}`} />
+                    <Hash className={`h-4 w-4 shrink-0 ${isActive ? "text-accent" : "text-muted"}`} />
                     <span className="truncate">{channel.name}</span>
                   </button>
                 );
@@ -77,27 +79,28 @@ export function MessagesSidebar() {
 
         {/* --- DIRECT MESSAGES SECTION --- */}
         <div>
-          <div className="flex items-center justify-between px-2 mb-2">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <div className="mb-1 pl-3">
+            <span className="text-xs text-muted">
               Direct Messages
             </span>
           </div>
 
           <div className="space-y-0.5">
             {/* For now, placeholder or mapping DMs */}
-            <p className="text-xs text-gray-400 px-2 py-1">Coming soon</p>
+            <p className="px-3 py-1 text-sm text-muted">Coming soon</p>
           </div>
         </div>
 
       </div>
 
       {/* 3. Bottom Button: + Add Channels */}
-      <div className="p-3 border-t border-gray-100">
+      <div className="border-t border-rule p-3">
         <button
+          type="button"
           onClick={() => setIsModalOpen(true)}
-          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-500 hover:text-indigo-600 hover:bg-indigo-50/50 rounded-lg transition-colors"
+          className="row-btn"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="h-4 w-4" />
           <span>Add channels</span>
         </button>
       </div>

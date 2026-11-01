@@ -46,19 +46,21 @@ export function CreateChannelModal({onClose}: CreateChannelModalProps){
 
     return(
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+            className="modal-back"
             onClick={onClose}
         >
             <div
-                className="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200"
+                className="modal"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-900">Create Channel</h2>
+                <div className="flex items-center justify-between px-6 py-4 border-b border-rule">
+                    <h2 className="section-title">Create Channel</h2>
                     <button 
                         onClick={onClose}
-                        className="p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 rounded-full transition-colors"
+                        className="btn btn-ghost btn-icon"
+            type="button"
+            aria-label="Close"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -66,14 +68,14 @@ export function CreateChannelModal({onClose}: CreateChannelModalProps){
                 <form onSubmit={handleSubmit} className="p-6">
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                Channel Name <span className="text-red-500">*</span>
+                            <label className="label">
+                                Channel Name <span className="text-error">*</span>
                             </label>
                             <input
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all text-sm"
+                                className="field field-lg"
                                 autoFocus
                             />
                         </div>
@@ -83,14 +85,14 @@ export function CreateChannelModal({onClose}: CreateChannelModalProps){
                         <button
                         type="button"
                         onClick={onClose}
-                        className="px-5 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-xl transition-colors"
+                        className="btn btn-ghost btn-lg"
                         >
                         Cancel
                         </button>
                         <button
                         type="submit"
                         disabled={isLoading}
-                        className="flex items-center justify-center min-w-30 px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="btn btn-lg min-w-32"
                         >
                         {isLoading ? (
                             <Loader2 className="w-4 h-4 animate-spin" />

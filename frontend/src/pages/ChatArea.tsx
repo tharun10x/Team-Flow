@@ -160,41 +160,38 @@ export function ChatArea() {
 
   if (!channelId) {
     return (
-      <div className="flex h-full items-center justify-center bg-gray-50">
-        <p className="text-gray-500 font-medium">Select a channel from the sidebar to start chatting.</p>
+      <div className="flex h-full items-center justify-center bg-paper-2">
+        <p className="text-sm text-muted">Select a channel from the sidebar to start chatting.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex h-full flex-col bg-paper">
       {/* Dynamic Header */}
-      <div className="px-6 py-4 bg-white border-b border-gray-200 flex justify-between items-center shrink-0">
+      <div className="flex h-14 shrink-0 items-center justify-between border-b border-rule px-6">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">
+          <h1 className="section-title">
             # {activeChannel ? activeChannel.name : "channel"}
           </h1>
-          <p className="text-xs text-gray-500">Channel conversation</p>
+          <p className="sr-only">Channel conversation</p>
         </div>
-        <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]'}`}></span>
-            <span className="text-xs text-gray-500 font-medium">
+        <div className="flex items-center gap-2" role="status">
+            <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-success' : 'bg-warn'}`}></span>
+            <span className="text-xs text-muted">
               {isConnected ? 'Connected' : 'Connecting...'}
             </span>
         </div>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+      <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 md:px-6">
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 mt-20 flex flex-col items-center">
-            <div className="w-14 h-14 bg-gray-50 border border-gray-100 rounded-full flex items-center justify-center mb-3">
-              <span className="text-2xl">👋</span>
-            </div>
-            <p className="font-semibold text-gray-900 text-base mb-1">
+          <div className="mx-auto mt-16 max-w-md border-b border-rule pb-6">
+            <p className="mb-1 font-display text-2xl font-semibold tracking-display text-ink">
               Welcome to #{activeChannel?.name || "this channel"}!
             </p>
-            <p className="text-xs text-gray-400">This is the start of the #{activeChannel?.name || "channel"} channel.</p>
+            <p className="text-sm text-ink-2">This is the start of the #{activeChannel?.name || "channel"} channel.</p>
           </div>
         ) : (
           messages.map((msg, idx) => {
@@ -204,26 +201,26 @@ export function ChatArea() {
           return (
             <div 
               key={msg.id || idx} 
-              className={`relative group flex gap-3 ${isMe ? 'flex-row-reverse' : ''} animate-in fade-in duration-200`}
+              className={`group relative flex gap-3 ${isMe ? 'flex-row-reverse' : ''}`}
             >
               {/* Avatar */}
-              <div className="w-8 h-8 rounded-full bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-sm">
+              <div className={`avatar avatar-lg ${isMe ? 'bg-graphite text-graphite-ink' : ''}`}>
                 {msg.senderAvatar || msg.senderName?.charAt(0).toUpperCase()}
               </div>
 
               <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[75%]`}>
                 {/* Header: Name + Time + (edited) */}
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="font-semibold text-gray-900 text-xs">{isMe ? 'You' : msg.senderName}</span>
+                  <span className="text-sm font-medium text-ink">{isMe ? 'You' : msg.senderName}</span>
                   
                   {msg.timestamp && (
-                    <span className="text-[10px] text-gray-400">
+                    <span className="text-xs tabular-nums text-muted">
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   )}
 
                   {msg.isEdited && !msg.isDeleted && (
-                    <span className="text-[10px] text-gray-400 italic">(edited)</span>
+                    <span className="text-xs text-muted">(edited)</span>
                   )}
                 </div>
                 {/* The reply button to start replying */}
@@ -239,19 +236,24 @@ export function ChatArea() {
                         if (e.key === "Escape") handleCancelEdit();
                       }}
                       autoFocus
-                      className="px-3 py-1.5 text-sm border border-indigo-400 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900"
+                      aria-label="Edit message"
+                      className="field min-w-64"
                     />
                     <button
                       onClick={() => handleSaveEdit(msg.id!)}
-                      className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg"
+                      type="button"
+                      className="btn btn-ghost btn-icon text-success!"
                       title="Save"
+                      aria-label="Save"
                     >
                       <Check className="w-4 h-4" />
                     </button>
                     <button
                       onClick={handleCancelEdit}
-                      className="p-1.5 text-gray-400 hover:bg-gray-100 rounded-lg"
+                      type="button"
+                      className="btn btn-ghost btn-icon"
                       title="Cancel"
+                      aria-label="Cancel"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -261,29 +263,29 @@ export function ChatArea() {
                   <div className="relative group/bubble flex items-center gap-1">
                     {/* The Message Bubble */}
                     <div
-                      className={`px-4 py-2 text-sm leading-relaxed wrap-break-word rounded-2xl ${
+                      className={`wrap-break-word rounded-card px-3.5 py-2 text-sm leading-relaxed ${
                         msg.isDeleted
-                          ? 'bg-gray-100 text-gray-400 italic border border-gray-200'
+                          ? 'border border-dashed border-rule-2 text-muted italic'
                           : isMe
-                          ? 'bg-indigo-600 text-white rounded-tr-none'
-                          : 'bg-gray-100 text-gray-800 rounded-tl-none'
+                          ? 'rounded-tr-none bg-graphite text-graphite-ink'
+                          : 'rounded-tl-none border border-rule bg-key-face text-ink'
                       }`}
                       onClick={()=>setShowPickerForMessageId(msg.id)}
                     >
                       {msg.replyTo && (
                         <div
-                          className={`mb-1.5 text-xs border-l-2 pl-2 py-0.5 rounded ${
+                          className={`mb-1.5 border-l-2 py-0.5 pl-2 text-xs ${
                             isMe
-                              ? 'border-indigo-300 bg-gray-700/40 text-indigo-200'
-                              : 'border-indigo-500 bg-gray-200/70 text-gray-600'
+                              ? 'border-graphite-muted text-graphite-muted'
+                              : 'border-rule-2 text-muted'
                           }`}
                         >
-                          <div   className={`font-semibold text-[11px] leading-tight ${
-                              isMe ? 'text-indigo-200' : 'text-indigo-600'
+                          <div   className={`text-xs font-medium leading-tight ${
+                              isMe ? 'text-graphite-ink' : 'text-ink-2'
                             }`}>
                             {msg.replyTo.senderName}
                           </div>
-                          <div className="truncate text-[11px] opacity-90">
+                          <div className="truncate text-xs">
                             {msg.replyTo.content}
                           </div>
                         </div>
@@ -293,20 +295,24 @@ export function ChatArea() {
                     {!msg.isDeleted && (
                       <button
                         onClick={() => setReplyingTo(msg)}
-                        className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-indigo-600 rounded-full hover:bg-gray-100 transition-all"
+                        type="button"
+                        className="btn btn-ghost btn-icon min-h-7! w-7! opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
                         title="Reply"
+                        aria-label="Reply"
                       >
                         <Reply className="w-3.5 h-3.5" />
                       </button>
                     )}
                     {
                       showPickerForMessageId === msg.id &&(
-                       <div className="absolute -top-10 right-2 bg-white border border-gray-200 rounded-full shadow-md px-2 py-1 flex items-center gap-1 z-30 animate-in fade-in zoom-in-95 duration-150">
+                       <div className="pop absolute -top-11 right-2 flex items-center gap-0.5 rounded-pill! px-1 py-1">
                           {['👍', '❤️', '😂', '🎉', '🚀'].map((emoji) => (
                             <button
                               key={emoji}
                               onClick={() => handleReaction(msg.id!, emoji)}
-                              className="p-1 text-base hover:scale-125 transition-transform rounded-full hover:bg-gray-100"
+                              type="button"
+                              aria-label={`React with ${emoji}`}
+                              className="btn btn-ghost btn-icon min-h-8! w-8! rounded-pill! text-base"
                             >
                               {emoji}
                             </button>
@@ -319,27 +325,31 @@ export function ChatArea() {
                       <div className="relative">
                         <button
                           onClick={() => setActiveMenuId(activeMenuId === msg.id ? null : msg.id!)}
-                          className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all"
+                          type="button"
+                          className="btn btn-ghost btn-icon min-h-7! w-7! opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
                           title="More actions"
+                          aria-label="More actions"
                         >
                           <MoreVertical className="w-4 h-4" />
                         </button>
 
                         {/* Dropdown Popup */}
                         {activeMenuId === msg.id && (
-                          <div className="absolute right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-20 w-28 animate-in fade-in zoom-in-95">
+                          <div className="pop absolute right-0 top-full mt-1 w-32 py-1">
                             <button
                               onClick={() => handleStartEdit(msg)}
-                              className="w-full px-3 py-1.5 text-xs text-left text-gray-700 hover:bg-gray-50 flex items-center gap-2 font-medium"
+                              type="button"
+                              className="row-btn rounded-none!"
                             >
-                              <Pencil className="w-3.5 h-3.5 text-gray-500" />
+                              <Pencil className="w-3.5 h-3.5 text-muted" />
                               Edit
                             </button>
                             <button
                               onClick={() => handleDelete(msg.id!)}
-                              className="w-full px-3 py-1.5 text-xs text-left text-red-600 hover:bg-red-50 flex items-center gap-2 font-medium"
+                              type="button"
+                              className="row-btn rounded-none! text-error! hover:bg-error-wash!"
                             >
-                              <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                              <Trash2 className="w-3.5 h-3.5" />
                               Delete
                             </button>
                           </div>
@@ -356,10 +366,11 @@ export function ChatArea() {
                           <button
                             key={r.emoji}
                             onClick={() => handleReaction(msg.id!, r.emoji)}
-                            className={`flex items-center gap-1 px-2 py-0.5 text-xs rounded-full border transition-all ${
+                            aria-pressed={iReacted}
+                            className={`flex min-h-7 items-center gap-1 rounded-pill border px-2 text-xs tabular-nums transition-colors focus-visible:outline-2 focus-visible:outline-focus ${
                               iReacted
-                                ? 'bg-indigo-50 border-indigo-300 text-indigo-700 font-medium'
-                                : 'bg-gray-100 border-gray-200 text-gray-600 hover:bg-gray-200'
+                                ? 'border-accent bg-accent-wash font-medium text-ink'
+                                : 'border-rule bg-key-face text-ink-2 hover:bg-paper-3'
                             }`}
                           >
                             <span>{r.emoji}</span>
@@ -379,35 +390,39 @@ export function ChatArea() {
         <div ref={messagesEndRef} />
       </div>
         {replyingTo && (
-          <div className="flex items-center justify-between px-4 py-2 mb-2 bg-indigo-50/70 border border-indigo-100 rounded-xl text-xs">
+          <div className="mx-4 mb-2 flex items-center justify-between rounded-card border border-rule bg-paper-2 px-4 py-2 text-sm md:mx-6">
             <div className="flex items-center gap-2 truncate">
-              <Reply className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-              <span className="text-gray-500">Replying to <strong className="text-gray-900">{replyingTo.senderName}</strong>:</span>
-              <span className="truncate text-gray-500 italic">"{replyingTo.content}"</span>
+              <Reply className="h-3.5 w-3.5 shrink-0 text-muted" />
+              <span className="text-muted">Replying to <strong className="text-ink">{replyingTo.senderName}</strong>:</span>
+              <span className="truncate text-muted italic">"{replyingTo.content}"</span>
             </div>
             <button
               onClick={() => setReplyingTo(null)}
-              className="text-gray-400 hover:text-gray-600 p-1"
+              type="button"
+              aria-label="Cancel reply"
+              className="btn btn-ghost btn-icon min-h-7! w-7!"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
         )}
       {/* Input Area */}
-      <div className="p-4 bg-white border-t border-gray-200 shrink-0">
+      <div className="shrink-0 border-t border-rule px-4 py-3 md:px-6">
         <form onSubmit={handleSend} className="relative flex items-center">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={isConnected ? `Message #${activeChannel?.name || "channel"}` : "Connecting..."}
-            className="w-full pl-5 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 text-sm"
+            aria-label="Message"
+            className="field field-lg pr-14!"
             disabled={!isConnected}
           />
           <button
             type="submit"
             disabled={!isConnected || !input.trim()}
-            className="absolute right-2 p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 disabled:opacity-40 transition-all shadow-sm"
+            aria-label="Send"
+            className="btn btn-icon absolute right-1.5"
           >
             <Send className="w-4 h-4" />
           </button>

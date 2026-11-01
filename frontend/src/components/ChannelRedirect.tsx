@@ -6,8 +6,8 @@ export function ChannelRedirect() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center bg-gray-50 text-gray-400 text-sm">
-        Loading channels...
+      <div className="flex h-full items-center justify-center bg-paper text-sm text-muted" role="status">
+        Loading channels…
       </div>
     );
   }
@@ -19,7 +19,7 @@ export function ChannelRedirect() {
   }
 
   return (
-    <div className="flex h-full items-center justify-center bg-gray-50 text-gray-500 text-sm font-medium">
+    <div className="flex h-full items-center justify-center bg-paper text-sm text-muted">
       No channels available. Create a channel to start chatting!
     </div>
   );

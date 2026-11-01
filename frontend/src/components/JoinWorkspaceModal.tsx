@@ -97,17 +97,19 @@ export function JoinWorkspaceModal({ onClose }: JoinWorkspaceModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="modal-back">
       <div 
-        className="bg-white rounded-3xl shadow-xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200"
+        className="modal max-w-lg!"
         onClick={(e) => e.stopPropagation()} 
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900">Join Workspace</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-rule">
+          <h2 className="section-title">Join Workspace</h2>
           <button 
             onClick={onClose}
-            className="p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 rounded-full transition-colors"
+            className="btn btn-ghost btn-icon"
+            type="button"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
@@ -117,7 +119,7 @@ export function JoinWorkspaceModal({ onClose }: JoinWorkspaceModalProps) {
         <form onSubmit={handleSubmit} className="p-8">
           <div className="flex flex-col items-center">
             
-            <label className="block text-sm font-semibold text-gray-700 mb-6 text-center">
+            <label className="label mb-6! text-center">
               Enter the 8-character invite code from your team
             </label>
             
@@ -134,7 +136,8 @@ export function JoinWorkspaceModal({ onClose }: JoinWorkspaceModalProps) {
                   value={char}
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold text-gray-900 bg-gray-50 border border-gray-300 rounded-xl focus:bg-white focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 outline-none transition-all uppercase"
+                  aria-label={`Invite code character ${index + 1}`}
+                  className="field mono h-12 w-10 px-0! text-center text-xl! font-medium sm:h-14 sm:w-12 sm:text-2xl!"
                 />
               ))}
             </div>
@@ -146,14 +149,14 @@ export function JoinWorkspaceModal({ onClose }: JoinWorkspaceModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 rounded-xl transition-colors"
+              className="btn btn-ghost btn-lg"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading || code.join("").length !== 8}
-              className="flex items-center justify-center min-w- px-6 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn btn-lg"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

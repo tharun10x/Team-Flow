@@ -8,7 +8,7 @@ export function DashboardLayout() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    if (isLoading) return <div className="justify-center items-center text-gray-400">Loading...</div>;
+    if (isLoading) return <div className="flex h-screen items-center justify-center bg-paper text-sm text-muted" role="status">Loading…</div>;
     if (!currentWorkspace) return <Navigate to="/workspaces" replace />;
 
     const firstSegment = location.pathname.split("/").filter(Boolean)[0] || "dashboard";
@@ -25,15 +25,15 @@ export function DashboardLayout() {
     };
 
     return(
-        <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
-            
+        <div className="flex h-screen overflow-hidden bg-paper-2 font-body text-ink">
+
             <Sidebar view={currentView} onNavigate={handleNavigate}/>
-             <main className="flex-1 flex flex-col min-w-0 bg-white">
+             <main className="flex min-w-0 flex-1 flex-col bg-paper">
                 <Navbar view={currentView} />
-                <div className="flex-1 overflow-y-auto bg-gray-50/50">
+                <div className="min-w-0 flex-1 overflow-y-auto overflow-x-clip">
                     <Outlet />
                 </div>
-            </main> 
+            </main>
         </div>
     );
 }

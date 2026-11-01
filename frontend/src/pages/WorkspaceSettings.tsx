@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useWorkspace } from "../context/WorkspaceContext";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
-import { Copy, Trash2, LogOut, Shield, UserMinus, Loader2 } from "lucide-react";
+import { Copy, Trash2, LogOut, Shield, UserMinus } from "lucide-react";
 import { toast } from "sonner";
 
 interface MemberInfo {
@@ -114,8 +114,10 @@ export function WorkspaceSettings() {
 
   if (isLoading) {
     return (
-      <div className="p-8 flex justify-center items-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+      <div className="page max-w-5xl! space-y-4" role="status" aria-label="Loading workspace settings">
+        <div className="skeleton h-8 w-64" />
+        <div className="skeleton h-4 w-96" />
+        <div className="skeleton mt-8 h-40 w-full" />
       </div>
     );
   }
@@ -126,156 +128,157 @@ export function WorkspaceSettings() {
   const isOwner = workspace.currentUserRole === "OWNER";
 
   return (
-    <div className="max-w-4xl mx-auto p-6 lg:p-8 space-y-8 animate-in fade-in duration-300">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Workspace Settings</h1>
-        <p className="text-gray-500 mt-1">Manage your team's workspace details and access.</p>
+    <div className="page max-w-5xl!">
+      <div className="mb-8">
+        <h1 className="page-title">Workspace Settings</h1>
+        <p className="mt-1 text-ink-2">Manage your team’s workspace details and access.</p>
       </div>
 
       {/* General Settings */}
-      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-        <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-          <h2 className="text-lg font-semibold text-gray-800">General</h2>
-        </div>
-        <div className="p-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section className="grid gap-6 border-t border-rule py-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-10">
+        <h2 className="section-title">General</h2>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Workspace Name</label>
-              <input 
-                type="text" 
-                value={workspace.name} 
-                disabled 
-                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-600 outline-none"
+              <label htmlFor="ws-name" className="label">Workspace Name</label>
+              <input
+                id="ws-name"
+                type="text"
+                value={workspace.name}
+                disabled
+                className="field"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Invite Code</label>
+              <label htmlFor="ws-invite" className="label">Invite Code</label>
               <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  value={workspace.inviteCode} 
-                  disabled 
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-600 font-mono font-medium outline-none tracking-widest uppercase"
+                <input
+                  id="ws-invite"
+                  type="text"
+                  value={workspace.inviteCode}
+                  disabled
+                  className="field mono font-medium"
                 />
-                <button 
+                <button
+                  type="button"
                   onClick={handleCopyInvite}
-                  className="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-medium rounded-xl transition-colors flex items-center gap-2"
+                  className="btn btn-quiet"
                 >
-                  <Copy className="w-4 h-4" />
+                  <Copy className="h-4 w-4" />
                   Copy
                 </button>
               </div>
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea 
-              value={workspace.description || "No description provided."} 
-              disabled 
+            <label htmlFor="ws-description" className="label">Description</label>
+            <textarea
+              id="ws-description"
+              value={workspace.description || "No description provided."}
+              disabled
               rows={2}
-              className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-600 outline-none resize-none"
+              className="field resize-none"
             />
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Members Section */}
-      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-        <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-gray-800">Members ({workspace.memberCount})</h2>
-        </div>
-        <div className="divide-y divide-gray-100">
+      <section className="grid gap-6 border-t border-rule py-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-10">
+        <h2 className="section-title">Members ({workspace.memberCount})</h2>
+        <ul className="divide-y divide-rule border-y border-rule">
           {workspace.members?.map((member) => (
-            <div key={member.userId} className="p-6 flex items-center justify-between hover:bg-gray-50/50 transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold shrink-0">
+            <li key={member.userId} className="flex items-center justify-between gap-4 py-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="avatar avatar-lg">
                   {member.name.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">{member.name}</p>
-                  <p className="text-sm text-gray-500">{member.email}</p>
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-ink">{member.name}</p>
+                  <p className="truncate text-sm text-muted">{member.email}</p>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-3">
+
+              <div className="flex shrink-0 items-center gap-2">
                 {/* Role Badge / Dropdown */}
                 {canManageMembers && member.role !== "OWNER" ? (
-                  <select 
+                  <select
                     value={member.role}
                     onChange={(e) => handleChangeRole(member.userId, e.target.value)}
-                    className="text-sm font-medium px-3 py-1.5 bg-gray-100 border-none rounded-lg text-gray-700 outline-none cursor-pointer hover:bg-gray-200 transition-colors"
+                    aria-label={`Role of ${member.name}`}
+                    className="field w-32!"
                   >
                     <option value="MEMBER">Member</option>
                     <option value="ADMIN">Admin</option>
                   </select>
                 ) : (
-                  <span className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 ${
-                    member.role === "OWNER" ? "bg-amber-100 text-amber-700" : 
-                    member.role === "ADMIN" ? "bg-violet-100 text-violet-700" : 
-                    "bg-gray-100 text-gray-600"
-                  }`}>
-                    {member.role === "OWNER" && <Shield className="w-3 h-3" />}
-                    {member.role}
+                  <span className="flex items-center gap-1 text-sm font-medium capitalize text-ink-2">
+                    {member.role === "OWNER" && <Shield className="h-3.5 w-3.5" />}
+                    {member.role.toLowerCase()}
                   </span>
                 )}
 
                 {/* Remove Button */}
                 {canManageMembers && member.role !== "OWNER" && (
-                  <button 
+                  <button
+                    type="button"
                     onClick={() => handleRemoveMember(member.userId)}
-                    className="p-2 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
+                    className="btn btn-danger btn-icon"
                     title="Remove Member"
+                    aria-label={`Remove ${member.name}`}
                   >
-                    <UserMinus className="w-4 h-4" />
+                    <UserMinus className="h-4 w-4" />
                   </button>
                 )}
               </div>
-            </div>
+            </li>
           ))}
-        </div>
-      </div>
+        </ul>
+      </section>
 
       {/* Danger Zone */}
-      <div className="bg-white border border-red-200 rounded-2xl overflow-hidden shadow-sm">
-        <div className="px-6 py-4 border-b border-red-100 bg-red-50 flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-red-600 flex items-center gap-2">
-            Danger Zone
-          </h2>
-        </div>
-        <div className="p-6">
+      <section className="grid gap-6 border-t border-rule py-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-10">
+        <h2 className="section-title text-error!">
+          Danger Zone
+        </h2>
+        <div className="border-y border-rule py-4">
           {!isOwner ? (
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
               <div>
-                <h3 className="font-semibold text-gray-900">Leave Workspace</h3>
-                <p className="text-sm text-gray-500 mt-1">You will lose access to all tasks and data in this workspace.</p>
+                <h3 className="font-body text-sm font-medium tracking-normal text-ink">Leave Workspace</h3>
+                <p className="text-sm text-muted">You will lose access to all tasks and data in this workspace.</p>
               </div>
-              <button 
+              <button
+                type="button"
                 onClick={handleLeaveWorkspace}
                 disabled={actionLoading}
-                className="px-5 py-2.5 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-semibold rounded-xl transition-all flex items-center gap-2 shrink-0"
+                aria-busy={actionLoading}
+                className="btn btn-danger shrink-0"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="h-4 w-4" />
                 Leave Workspace
               </button>
             </div>
           ) : (
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
               <div>
-                <h3 className="font-semibold text-gray-900">Delete Workspace</h3>
-                <p className="text-sm text-gray-500 mt-1">Permanently delete this workspace and all of its data. This cannot be undone.</p>
+                <h3 className="font-body text-sm font-medium tracking-normal text-ink">Delete Workspace</h3>
+                <p className="text-sm text-muted">Permanently delete this workspace and all of its data. This cannot be undone.</p>
               </div>
-              <button 
+              <button
+                type="button"
                 onClick={handleDeleteWorkspace}
                 disabled={actionLoading}
-                className="px-5 py-2.5 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-semibold rounded-xl transition-all flex items-center gap-2 shrink-0"
+                aria-busy={actionLoading}
+                className="btn btn-danger shrink-0"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="h-4 w-4" />
                 Delete Workspace
               </button>
             </div>
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 }
