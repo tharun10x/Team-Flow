@@ -77,7 +77,7 @@ Accounts use email and password. Passwords are hashed with BCrypt, and sessions 
 | :--- | :--- |
 | Frontend | React 19, TypeScript 6, Vite 8 |
 | Styling | Tailwind CSS v4, Lucide icons, Sonner for toasts |
-| Routing and state | React Router v7, React Context, TanStack Query |
+| Routing and state | React Router v7, React Context (TanStack Query is installed but not used yet) |
 | Real-time client | `@stomp/stompjs` with `sockjs-client` |
 | Backend | Spring Boot 4.1, Java 21 |
 | Security | Spring Security, JJWT 0.12.6, BCrypt |
@@ -109,6 +109,8 @@ graph TD
     Services --> Repos
     Repos --> DB
 ```
+
+For step-by-step diagrams of login, authenticated REST calls, WebSocket chat and error handling, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Project structure
 
