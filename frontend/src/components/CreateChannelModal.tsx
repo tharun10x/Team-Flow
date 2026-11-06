@@ -30,7 +30,7 @@ export function CreateChannelModal({onClose}: CreateChannelModalProps){
         try {
             setIsLoading(true);
             
-            const response = await api.post(`workspaces/${currentWorkspace?.id}/channels`,{
+            await api.post(`workspaces/${currentWorkspace?.id}/channels`,{
                 name
             })
             await fetchChannels();  

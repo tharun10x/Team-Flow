@@ -15,7 +15,7 @@ export function JoinWorkspaceModal({ onClose }: JoinWorkspaceModalProps) {
  
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   
-  const { fetchWorkspaces, selectWorkspace } = useWorkspace();
+  const { fetchWorkspaces} = useWorkspace();
   const navigate = useNavigate();
 
 

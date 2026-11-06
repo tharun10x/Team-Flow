@@ -14,7 +14,7 @@ export function CreateWorkspaceModal({ onClose }: CreateWorkspaceModalProps) {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
-  const { fetchWorkspaces, selectWorkspace } = useWorkspace();
+  const { fetchWorkspaces} = useWorkspace();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -296,7 +296,7 @@ export function Tasks(){
                         key={task.id}
                         task={task}
                         onClick={() => setSelectedTask(task)}
-                        onStatusChange={(id, status) => handleTaskUpdated({ ...task, status })}
+                        onStatusChange={(_id, status) => handleTaskUpdated({ ...task, status })}
                         />
                     ))}
                     </ul>

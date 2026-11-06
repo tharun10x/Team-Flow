@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useWorkspace } from "../context/WorkspaceContext";
+// import { useWorkspace } from "../context/WorkspaceContext";
 import { useChannel } from "../context/ChannelContext";
 import { Hash, Plus } from "lucide-react";
 import { CreateChannelModal } from "./CreateChannelModal";
 
 export function MessagesSidebar() {
-  const { currentWorkspace } = useWorkspace();
+  // const { currentWorkspace } = useWorkspace();
   const { channels, isLoading } = useChannel();
   const { channelId } = useParams(); // Tells us which channel is active
   const navigate = useNavigate();
@@ -16,7 +16,8 @@ export function MessagesSidebar() {
 
   // 1. Filter channels (standard channels vs direct messages)
   const regularChannels = channels.filter((c) => !c.isDirectMessage);
-  const directMessages = channels.filter((c) => c.isDirectMessage);
+  // TODO: to work on this for direct messaging
+  // const directMessages = channels.filter((c) => c.isDirectMessage);
 
   return (
     <aside className="flex h-full w-44 shrink-0 select-none flex-col border-r border-rule bg-paper-2 md:w-60">

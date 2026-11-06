@@ -94,7 +94,7 @@ export function TaskDetailModal({
         if(!isOwnerOrAdmin) return;
         try {
             setIsDeleting(true);
-            const deletedTask = await taskApi.deleteTask(currentTask.id);
+            await taskApi.deleteTask(currentTask.id);
             toast.success("Task deleted successfully")
             onTaskDelete(currentTask.id);
             onClose();
@@ -234,11 +234,11 @@ export function TaskDetailModal({
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     {/* 2A. Task Title & Description */}
                     <div>
-                        <h1 className="mb-3 max-w-none break-words font-display text-2xl font-semibold tracking-display text-ink">
+                        <h1 className="mb-3 max-w-none wrap-break-word font-display text-2xl font-semibold tracking-display text-ink">
                             {currentTask.title}
                         </h1>
                         <div>
-                            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-ink-2">
+                            <p className="whitespace-pre-wrap wrap-break-word text-sm leading-relaxed text-ink-2">
                                 {currentTask.description || (
                                     <span className="italic text-muted">No description provided.</span>
                                 )}
@@ -358,7 +358,7 @@ export function TaskDetailModal({
                                                     })}
                                                 </span>
                                             </div>
-                                            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-ink-2">
+                                            <p className="whitespace-pre-wrap wrap-break-word text-sm leading-relaxed text-ink-2">
                                                 {comment.content}
                                             </p>
                                         </div>
